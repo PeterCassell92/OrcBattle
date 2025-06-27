@@ -3,8 +3,7 @@ module.exports = {
         browser: true,
         es2021: true,
     },
-    extends: ['airbnb-base', 'prettier'],
-    plugins: ['prettier'],
+    extends: ['airbnb-base'],
     parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
@@ -16,9 +15,6 @@ module.exports = {
         console: 'readonly',
     },
     rules: {
-        // Prettier integration
-        'prettier/prettier': 'error',
-
         // Relaxed rules for game development
         'no-unused-vars': 'warn', // Warn instead of error for unused variables
         'no-param-reassign': 'off', // Common in game development

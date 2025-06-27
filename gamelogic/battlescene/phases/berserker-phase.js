@@ -203,9 +203,11 @@ export function applyBerserkerPhaseMethods(SceneClass) {
             const highBerserkerConditionDifferential = 15;
             if (majorityUnitAdvantage >= highBerserkerConditionDifferential) {
                 return 3.5;
-            } else if (majorityUnitAdvantage >= mediumBerserkerConditionDifferential) {
+            }
+            if (majorityUnitAdvantage >= mediumBerserkerConditionDifferential) {
                 return 2;
-            } else if (majorityUnitAdvantage >= normalBerserkerConditionDifferential) {
+            }
+            if (majorityUnitAdvantage >= normalBerserkerConditionDifferential) {
                 return 1;
             }
             return null;
@@ -238,13 +240,13 @@ export function applyBerserkerPhaseMethods(SceneClass) {
             // Then activate the full berserker trio system with strength modifier
             this.activateBerserkerTrio(berserkerTeam, berserkerCandidates, berserkerMode);
 
-            //Give the nonbeserker team a fire rate increase
+            // Give the nonbeserker team a fire rate increase
             nonberserkerCandidates.forEach(orc => {
-                orc.fireRate = orc.fireRate - 450;
-                orc.preferredRange = orc.preferredRange + 160;
-                //orc.bodyTurnSpeed = 2.5;
-                //orc.headTurnSpeed = 3.5;
-                orc.moveSpeed = orc.moveSpeed + 40;
+                orc.fireRate -= 450;
+                orc.preferredRange += 160;
+                orc.bodyTurnSpeed = 2.5;
+                orc.headTurnSpeed = 3.5;
+                orc.moveSpeed += 40;
             });
         }
     };

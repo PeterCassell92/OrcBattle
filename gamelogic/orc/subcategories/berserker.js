@@ -125,7 +125,7 @@ export function applyBerserkerFeatures(OrcClass) {
             alpha: 0.7,
             duration: 200,
             yoyo: true,
-            onComplete: function () {
+            onComplete() {
                 for (const t of this.targets) {
                     t.clearTint();
                 }
@@ -265,14 +265,14 @@ export function applyBerserkerFeatures(OrcClass) {
     };
 
     OrcClass.prototype.applySwordDamage = function (target) {
-        //Berserker must be alive for sword damage to be applied
+        // Berserker must be alive for sword damage to be applied
         if (!this.active | !this.scene) {
             return;
         }
         // Sword attacks do 2 damage (more than lasers)
-        //console.log(`${target.team} orc taking sword damage - health before: ${target.health}`);
+        // console.log(`${target.team} orc taking sword damage - health before: ${target.health}`);
         target.health -= 2;
-        //console.log(`${target.team} orc health after sword damage: ${target.health}`);
+        // console.log(`${target.team} orc health after sword damage: ${target.health}`);
 
         // Visual feedback
         target.setTint(0xff0000);
@@ -281,10 +281,10 @@ export function applyBerserkerFeatures(OrcClass) {
             alpha: 0.3,
             duration: 150,
             yoyo: true,
-            onComplete: function () {
+            onComplete() {
                 target.clearTint();
                 if (target.health <= 0) {
-                    //console.log(`${target.team} orc died from sword damage - health: ${target.health}`);
+                    // console.log(`${target.team} orc died from sword damage - health: ${target.health}`);
                     target.attemptDie();
                 }
             },
@@ -343,16 +343,16 @@ export function applyBerserkerFeatures(OrcClass) {
             duration: 150,
             ease: 'Power2.out',
             yoyo: true,
-            onComplete: function () {
+            onComplete() {
                 // Check if attack hits
                 if (target && target.active) {
                     const distance = Phaser.Math.Distance.Between(orc.x, orc.y, target.x, target.y);
                     if (distance < 70) {
                         // Successful hit (increased range from 60 to 70 to match attack range)
                         orc.applySwordDamage(target);
-                        //console.log(`${orc.team} berserker sword hit ${target.team} orc!`);
+                        // console.log(`${orc.team} berserker sword hit ${target.team} orc!`);
                     } else {
-                        //console.log(`${orc.team} berserker sword attack missed`);
+                        // console.log(`${orc.team} berserker sword attack missed`);
                     }
                 }
 
@@ -384,7 +384,7 @@ export function applyBerserkerFeatures(OrcClass) {
 
     OrcClass.prototype.isPositionSafeForMaterialization = function (testX = this.x, testY = this.y) {
         // Check if position would be inside terrain
-        for (let terrain of this.scene.terrain) {
+        for (const terrain of this.scene.terrain) {
             if (terrain.chunks && terrain.chunks.length > 0) {
                 // Multi-chunk terrain
                 const bounds = terrain.getBounds();
@@ -410,7 +410,7 @@ export function applyBerserkerFeatures(OrcClass) {
 
         // Check if position would overlap with other orcs
         const allOrcs = [...this.scene.blueOrcs, ...this.scene.redOrcs].filter(orc => orc.active && orc !== this);
-        for (let orc of allOrcs) {
+        for (const orc of allOrcs) {
             const distance = Phaser.Math.Distance.Between(testX, testY, orc.x, orc.y);
             if (distance < 40) {
                 return false;

@@ -159,7 +159,7 @@ export class SpriteGenerator {
 
             // Check if position conflicts with existing decorations
             let tooClose = false;
-            for (let decoration of scene.backgroundDecorations) {
+            for (const decoration of scene.backgroundDecorations) {
                 if (decoration.decorationType === 'shrub') {
                     const distance = Phaser.Math.Distance.Between(finalX, finalY, decoration.x, decoration.y);
                     if (distance < 40) {

@@ -1,8 +1,11 @@
 // Main game scene and core logic
 import { OrcBehaviour } from '../../orc/utils/orc-behaviour.js';
 
-// The BattleScene Contains the Main Game Creation and Game Loop logic.
-// All other actions are modularised
+/**
+ * The BattleScene Contains the Main Game Creation and Game Loop logic.
+ * All other actions are modularised
+ * @implements {import('../index.d.ts').IBattleScene}
+ */
 export class BattleScene extends Phaser.Scene {
     constructor() {
         super({ key: 'BattleScene' });
@@ -65,16 +68,19 @@ export class BattleScene extends Phaser.Scene {
 
     // Initiation of game
     create() {
+        /** @type {import('../index.d.ts').IBattleScene} */
+        const scene = this;
+        
         this.gameOver = false;
         this.winner = null;
         this.gameStartTime = null; // Will be set after all objects are loaded
         this.gameEndTime = null;
 
         // Clean up any existing blood stains from previous games
-        this.cleanupBloodStains();
+        scene.cleanupBloodStains();
 
         // Reset any berserker collision states from previous games
-        this.resetAllCollisionStates();
+        scene.resetAllCollisionStates();
 
         // Firing delay system - no one can fire for first 1 second
         this.firingAllowed = false;
@@ -85,21 +91,21 @@ export class BattleScene extends Phaser.Scene {
         this.kingReleaseTime = 14000; // 14 seconds in milliseconds
 
         // Create all sprites first
-        this.createFlagSprites();
-        this.createLaserSprite();
-        this.createTerrainSprites();
+        scene.createFlagSprites();
+        scene.createLaserSprite();
+        scene.createTerrainSprites();
 
         // Create alcoves and kings
-        this.createKingsAndAlcoves();
+        scene.createKingsAndAlcoves();
 
         // Create terrain obstacles
-        this.createTerrain();
+        scene.createTerrain();
 
         // Create background decorations
-        this.createBackgroundDecorations();
+        scene.createBackgroundDecorations();
 
         // Create orc teams
-        this.createTeams();
+        scene.createTeams();
 
         // Set up physics
         this.physics.world.setBounds(0, 0, 800, 600);
@@ -145,12 +151,14 @@ export class BattleScene extends Phaser.Scene {
 
     // The main game loop
     update(time, delta) {
+        /** @type {import('../index.d.ts').IBattleScene} */
+        const scene = this;
         // Always sync sprite positions, even during game over
         [...this.blueOrcs, ...this.redOrcs].forEach(orc => {
             if (orc.active) {
                 orc.syncSprites();
                 // Sync berserker visual effects
-                this.syncEffectPositions(orc);
+                scene.syncEffectPositions(orc);
             }
         });
 
@@ -185,19 +193,19 @@ export class BattleScene extends Phaser.Scene {
         }
 
         // Check if firing should be allowed (after 1 second delay) - A temporary ceasfire
-        this.checkFiringDelay();
+        scene.checkFiringDelay();
 
         // Manage cover firer phase and movements
-        this.updateCombatStripPositions();
-        this.checkCoverFirerAdvancement();
+        scene.updateCombatStripPositions();
+        scene.checkCoverFirerAdvancement();
 
         // Check if kings should be released
-        this.checkKingRelease();
+        scene.checkKingRelease();
 
         // Check the phase condition for Berserkers
-        this.checkBerserkerTrio();
+        scene.checkBerserkerTrio();
         // Update the berserker subphases (if we're in berserker phase)
-        this.updateBerserkerPhase(time);
+        scene.updateBerserkerPhase(time);
 
         [...this.blueOrcs, ...this.redOrcs].forEach(orc => {
             if (orc.active) {
@@ -206,16 +214,19 @@ export class BattleScene extends Phaser.Scene {
             }
         });
 
-        this.updateLaserPositions(delta);
+        scene.updateLaserPositions(delta);
 
         // Check if the game is won and start the Victory Phase if it is
-        this.checkWinCondition();
+        scene.checkWinCondition();
     }
 
     // The override for the Scene destory method to allow for cleaning up additional timeouts
     destroy() {
+        /** @type {import('../index.d.ts').IBattleScene} */
+        const scene = this;
+        
         // Clean up any pending timeouts to prevent errors when restarting
-        this.cleanupPendingTimeouts();
+        scene.cleanupPendingTimeouts();
 
         // Call parent destroy
         super.destroy();
