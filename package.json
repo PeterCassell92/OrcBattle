@@ -1,0 +1,24 @@
+{
+  "name": "orc",
+  "version": "1.0.0",
+  "main": "gamelogic/main.js",
+  "scripts": {
+    "lint": "eslint gamelogic/**/*.js",
+    "lint:fix": "eslint gamelogic/**/*.js --fix",
+    "format": "prettier --write gamelogic/**/*.js",
+    "format:check": "prettier --check gamelogic/**/*.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.1",
+    "prettier": "^3.6.2"
+  }
+}

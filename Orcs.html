@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orc Battle Arena</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.70.0/phaser.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #game-container {
+            border: 2px solid #34495e;
+            border-radius: 8px;
+            position: relative;
+        }
+        .info {
+            margin: 2px 6px;
+            text-align: center;
+            position: absolute;
+            top: -50px;
+            width: 100%;
+        }
+        .team-status {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+        }
+        .team {
+            text-align: center;
+        }
+        .team-blue { color: #3498db; }
+        .team-red { color: #e74c3c; }
+        .setup-screen {
+            background: #34495e;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .team-setup {
+            display: flex;
+            gap: 50px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .team-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .team-input input {
+            padding: 10px;
+            font-size: 18px;
+            text-align: center;
+            border: 2px solid #7f8c8d;
+            border-radius: 5px;
+            background: #2c3e50;
+            color: white;
+            width: 100px;
+        }
+        .team-input input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .start-button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .start-button:hover {
+            background: #2ecc71;
+        }
+        .start-button:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+        }
+        #game-ui {
+            margin-top: 10px;
+            display: flex;
+            width : 100%;
+        }
+        .game-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-direction: column;
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+        .game-button {
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .game-controls {
+            flex-grow: 0;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .game-control-description{
+            padding: 10px;
+        }
+        .replay-button {
+            background: #3498db;
+            color: white;
+        }
+        .replay-button:hover {
+            background: #2980b9;
+        }
+        .setup-button {
+            background: #95a5a6;
+            color: white;
+        }
+        .setup-button:hover {
+            background: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    
+    
+    <div id="setup-screen" class="setup-screen">
+        <h2>Battle Setup</h2>
+        <p>Enter team numbers for the royal banners:</p>
+        
+        <div class="team-setup">
+            <div class="team-input">
+                <h3 class="team-blue">Blue Kingdom</h3>
+                <input type="number" id="blue-team-number" placeholder="1-999" min="1" max="999">
+                <small>Royal Banner Number</small>
+            </div>
+            <div class="team-input">
+                <h3 class="team-red">Red Kingdom</h3>
+                <input type="number" id="red-team-number" placeholder="1-999" min="1" max="999">
+                <small>Royal Banner Number</small>
+            </div>
+        </div>
+
+         <div style="margin: 20px 0;">
+                <label style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+                    <input type="checkbox" id="show-unit-info">
+                    <span>Show Unit Info</span>
+                </label>
+            </div>
+        
+        <button id="start-battle" class="start-button" onclick="startBattle()">Begin Battle!</button>
+        <p><small>Each kingdom's warriors fight for their story point estimates</small></p>
+    </div>
+
+    <div id="game-ui">
+        <div class="game-controls">
+            <div class="game-control-description">
+                <h1>Orc Battle Arena</h1>
+                <p>Watch the kingdoms battle!</p>
+                <p>Protect your king to claim victory!</p>
+            </div>
+            <div class="game-buttons">
+                <button id="replay-btn" class="game-button replay-button" onclick="replayBattle()">🔄 Replay Battle</button>
+                <button id="restart-btn" class="game-button setup-button" onclick="showSetup()">⚙️ New Setup</button>
+            </div>
+        </div>
+        <div id="game-container">
+            <div class="info">
+                <div class="team-status">
+                    <div class="team team-blue">
+                        <h3>Blue Kingdom <span id="blue-banner-display"></span></h3>
+                        <div id="blue-count">5 Warriors + King</div>
+                    </div>
+                    <div class="team team-red">
+                        <h3>Red Kingdom <span id="red-banner-display"></span></h3>
+                        <div id="red-count">5 Warriors + King</div>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <div id="game-timer" style="font-size: 14px; color: #bdc3c7;">Game Time: 0.0s</div>
+                </div>
+            </div>
+        </div>
+        <div class="spacer">
+
+        </div>
+        
+    </div>
+
+    <!-- Load setup module (which handles initialization and imports) -->
+    <script type="module" src="gamelogic/setup.js"></script>
+</body>
+</html>

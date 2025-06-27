@@ -1,0 +1,14 @@
+# Ignore config files to prevent weird formatting
+.eslintrc.js
+.prettierrc
+package.json
+package-lock.json
+
+# Ignore build outputs
+node_modules/
+dist/
+build/
+
+# Ignore other files that shouldn't be formatted
+*.md
+*.html
