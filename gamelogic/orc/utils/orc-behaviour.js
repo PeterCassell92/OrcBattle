@@ -487,6 +487,14 @@ export const OrcBehaviour = {
     }
   },
 
+  /**
+   *
+   * @param {import('battlescene').IBattleScene} scene
+   * @param {import('orc').IOrc} orc
+   * @param {import('orc').IOrc} enemy
+   * @param {number} time
+   * @returns
+   */
   checkBerserkerTerrainDestruction(scene, orc, enemy, time) {
     // Berserker is frustrated from not being able to use sword - find terrain to destroy
     // console.log(`${orc.team} berserker frustrated from lack of sword attacks for ${((time - orc.lastFireTime)/1000).toFixed(1)}s`);
@@ -560,6 +568,12 @@ export const OrcBehaviour = {
     // If we found terrain and we're close enough, use axe
     if (closestBlockingTerrain && closestDistance < 70) {
       orc.destroyTerrainChunk(closestBlockingTerrain);
+
+      const chanceOfMiniHeal = 0.4;
+
+      if (Math.random() <= chanceOfMiniHeal) {
+        orc.health += 0.5;
+      }
 
       // Reset frustration timer by updating lastFireTime (berserker feels better after destroying something)
       orc.lastFireTime = time;

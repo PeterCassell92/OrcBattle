@@ -447,7 +447,7 @@ export function applyBerserkerFeatures(OrcClass) {
     this.scene.removeInvisibilityEffect(this);
 
     // Re-enable collisions if they were disabled
-    if (orc.collisionsDisabled) {
+    if (this.collisionsDisabled) {
       this.enableCollisions();
     }
 
