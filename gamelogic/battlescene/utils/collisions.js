@@ -1,15 +1,18 @@
 /**
  * @typedef {import('../../orc/index.js').IOrc} IOrc
+ * @typedef {import('../index.d.ts').IBattleScene} IBattleScene
  */
 
 export function applyCollisionMethods(SceneClass) {
   /**
-     *
-     * @param {*} laser
-     * @param {IOrc} orc
-     * @returns
-     */
+   * Laser hits orc collision callback
+   * @param {Phaser.Types.Physics.Arcade.GameObjectWithBody} laser
+   * @param {IOrc} orc
+   * @returns
+   */
   SceneClass.prototype.laserHitOrc = function (laser, orc) {
+    /** @type {IBattleScene} */
+    const scene = this;
     if (laser.team === orc.team) return;
 
     // Debug logging
@@ -18,10 +21,10 @@ export function applyCollisionMethods(SceneClass) {
     // Check for berserker immunity (during immunity phase)
     if (orc.immuneToDamage === true) {
       // Show golden deflection effect
-      this.createImmunityDeflectionEffect(laser.x, laser.y);
+      scene.createImmunityDeflectionEffect(laser.x, laser.y);
       console.log(`${orc.team} orc is immune to damage! Deflecting laser.`);
 
-      this.lasers = this.lasers.filter((l) => l !== laser);
+      scene.lasers = scene.lasers.filter((l) => l !== laser);
       laser.destroy();
       return;
     }
@@ -29,10 +32,10 @@ export function applyCollisionMethods(SceneClass) {
     // Check for invisibility invulnerability
     if (orc.invulnerableWhileInvisible === true) {
       // Show special invisibility deflection effect
-      this.createInvisibilityDeflectionEffect(laser.x, laser.y);
+      scene.createInvisibilityDeflectionEffect(laser.x, laser.y);
       console.log(`${orc.team} berserker is invulnerable while invisible! Deflecting laser.`);
 
-      this.lasers = this.lasers.filter((l) => l !== laser);
+      scene.lasers = scene.lasers.filter((l) => l !== laser);
       laser.destroy();
       return;
     }
@@ -41,10 +44,10 @@ export function applyCollisionMethods(SceneClass) {
     if (orc.type === 'berserker' && orc.laserResistance) {
       if (Math.random() < orc.laserResistance) {
         // Berserker resisted the laser
-        this.createBerserkerResistanceEffect(laser.x, laser.y, orc);
+        scene.createBerserkerResistanceEffect(laser.x, laser.y, orc);
         // console.log(`${orc.team} berserker resisted laser attack!`);
 
-        this.lasers = this.lasers.filter((l) => l !== laser);
+        scene.lasers = scene.lasers.filter((l) => l !== laser);
         laser.destroy();
         return;
       }
@@ -56,10 +59,10 @@ export function applyCollisionMethods(SceneClass) {
 
       if (laserDeflected) {
         // Laser deflected/absorbed - no damage but show ripple effect
-        this.createLaserRippleEffect(laser.x, laser.y, orc.team);
+        scene.createLaserRippleEffect(laser.x, laser.y, orc.team);
         // console.log(`${orc.team} orc deflected laser shot!`);
 
-        this.lasers = this.lasers.filter((l) => l !== laser);
+        scene.lasers = scene.lasers.filter((l) => l !== laser);
         laser.destroy();
         return;
       }
@@ -71,7 +74,7 @@ export function applyCollisionMethods(SceneClass) {
     // console.log(`${orc.team} orc health after damage: ${orc.health}`);
 
     orc.setTint(0xff0000);
-    this.tweens.add({
+    scene.tweens.add({
       targets: orc,
       alpha: 0.5,
       duration: 100,
@@ -85,14 +88,22 @@ export function applyCollisionMethods(SceneClass) {
       },
     });
 
-    this.lasers = this.lasers.filter((l) => l !== laser);
+    scene.lasers = scene.lasers.filter((l) => l !== laser);
     laser.destroy();
   };
 
   // Collision handlers
+  /**
+  * Laser hits terrain collision callback
+  * @param {Phaser.Types.Physics.Arcade.GameObjectWithBody} laser
+  * @param {Phaser.Types.Physics.Arcade.GameObjectWithBody} terrain
+  */
   SceneClass.prototype.laserHitTerrain = function (laser, terrain) {
-    const spark = this.add.circle(laser.x, laser.y, 4, 0xffffff);
-    this.tweens.add({
+  /** @type {IBattleScene} */
+    const scene = this;
+
+    const spark = scene.add.circle(laser.x, laser.y, 4, 0xffffff);
+    scene.tweens.add({
       targets: spark,
       alpha: 0,
       scale: 2,
@@ -100,30 +111,45 @@ export function applyCollisionMethods(SceneClass) {
       onComplete: () => spark.destroy(),
     });
 
-    this.lasers = this.lasers.filter((l) => l !== laser);
+    scene.lasers = scene.lasers.filter((l) => l !== laser);
     laser.destroy();
   };
 
+  /**
+  * Laser hits alcove wall collision callback
+  * @param {Phaser.Types.Physics.Arcade.GameObjectWithBody} laser
+   * @param {Phaser.Types.Physics.Arcade.GameObjectWithBody} wall
+  */
   SceneClass.prototype.laserHitAlcoveWall = function (laser, wall) {
+  /** @type {IBattleScene} */
+    const scene = this;
+
     // console.log(`Laser hit ${wall.alcoveTeam} alcove wall`);
 
     // Create small laser ripple effect at point of contact
-    this.createLaserRippleEffect(laser.x, laser.y, wall.alcoveTeam);
+    scene.createLaserRippleEffect(laser.x, laser.y, wall.alcoveTeam);
 
     // 1/20 chance for the king to speak when alcove wall is hit
     if (Math.random() < 0.05) {
       // 1/20 = 0.05
       // Get the appropriate king
-      const king = wall.alcoveTeam === 'blue' ? this.blueKing : this.redKing;
+      const king = wall.alcoveTeam === 'blue' ? scene.blueKing : scene.redKing;
       king.tauntOpposingArmy();
     }
 
     // Remove laser from array and destroy it
-    this.lasers = this.lasers.filter((l) => l !== laser);
+    scene.lasers = scene.lasers.filter((l) => l !== laser);
     laser.destroy();
   };
 
+  /**
+   * King hits terrain collision callback
+   * @param {import('../index.d.ts').IKing} king
+   * @param {import('../../orc/index.js').TerrainObject} terrain
+   */
   SceneClass.prototype.kingHitTerrain = function (king, terrain) {
+    /** @type {IBattleScene} */
+    const scene = this;
     console.log(`${king.team} king destroys terrain on contact!`);
 
     // Store terrain position for knockback
@@ -131,8 +157,8 @@ export function applyCollisionMethods(SceneClass) {
     const terrainY = terrain.y;
 
     // Create royal destruction effect
-    const royalEffect = this.add.circle(terrain.x, terrain.y, 25, 0xffd700); // Gold effect
-    this.tweens.add({
+    const royalEffect = scene.add.circle(terrain.x, terrain.y, 25, 0xffd700); // Gold effect
+    scene.tweens.add({
       targets: royalEffect,
       alpha: 0,
       scale: 3,
@@ -141,7 +167,7 @@ export function applyCollisionMethods(SceneClass) {
     });
 
     // Apply royal knockback (stronger than axe knockback)
-    this.checkRoyalKnockback(terrainX, terrainY);
+    scene.checkRoyalKnockback(terrainX, terrainY);
 
     // For chunk-based terrain, destroy the entire structure
     if (terrain.terrainType === 'terrain-rock-chunk' && terrain.rockParent) {
@@ -153,35 +179,41 @@ export function applyCollisionMethods(SceneClass) {
     } else if (terrain.terrainType === 'terrain-tree') {
       // Trees are destroyed completely
       terrain.destroy();
-      this.terrain = this.terrain.filter((t) => t !== terrain);
-      this.terrainGroup.remove(terrain);
+      scene.terrain = scene.terrain.filter((t) => t !== terrain);
+      scene.terrainGroup.remove(terrain);
     } else {
       // Legacy terrain
       terrain.destroy();
-      this.terrain = this.terrain.filter((t) => t !== terrain);
-      this.terrainGroup.remove(terrain);
+      scene.terrain = scene.terrain.filter((t) => t !== terrain);
+      scene.terrainGroup.remove(terrain);
     }
   };
 
+  /**
+  * Setup initial collision handlers
+  */
   SceneClass.prototype.setupInitialColliders = function () {
-    this.physics.add.collider(this.laserGroup, this.terrainGroup, this.laserHitTerrain, null, this);
-    this.physics.add.overlap(this.laserGroup, this.blueOrcGroup, this.laserHitOrc, null, this);
-    this.physics.add.overlap(this.laserGroup, this.redOrcGroup, this.laserHitOrc, null, this);
+  /** @type {IBattleScene} */
+    const scene = this;
+
+    scene.physics.add.collider(scene.laserGroup, scene.terrainGroup, scene.laserHitTerrain, null, scene);
+    scene.physics.add.overlap(scene.laserGroup, scene.blueOrcGroup, scene.laserHitOrc, null, scene);
+    scene.physics.add.overlap(scene.laserGroup, scene.redOrcGroup, scene.laserHitOrc, null, scene);
 
     // Laser collision with alcove walls
-    this.physics.add.collider(this.laserGroup, this.blueAlcoveWalls, this.laserHitAlcoveWall, null, this);
-    this.physics.add.collider(this.laserGroup, this.redAlcoveWalls, this.laserHitAlcoveWall, null, this);
+    scene.physics.add.collider(scene.laserGroup, scene.blueAlcoveWalls, scene.laserHitAlcoveWall, null, scene);
+    scene.physics.add.collider(scene.laserGroup, scene.redAlcoveWalls, scene.laserHitAlcoveWall, null, scene);
 
     // Orc-terrain collisions (these should prevent orcs from moving through terrain)
-    this.physics.add.collider(this.blueOrcGroup, this.terrainGroup);
-    this.physics.add.collider(this.redOrcGroup, this.terrainGroup);
+    scene.physics.add.collider(scene.blueOrcGroup, scene.terrainGroup);
+    scene.physics.add.collider(scene.redOrcGroup, scene.terrainGroup);
 
-    this.physics.add.collider(this.blueOrcGroup, this.redOrcGroup);
-    this.physics.add.collider(this.blueOrcGroup, this.blueOrcGroup);
-    this.physics.add.collider(this.redOrcGroup, this.redOrcGroup);
+    scene.physics.add.collider(scene.blueOrcGroup, scene.redOrcGroup);
+    scene.physics.add.collider(scene.blueOrcGroup, scene.blueOrcGroup);
+    scene.physics.add.collider(scene.redOrcGroup, scene.redOrcGroup);
 
     // King collision with terrain - kings destroy terrain on contact
-    this.physics.add.overlap(this.blueKing, this.terrainGroup, this.kingHitTerrain, null, this);
-    this.physics.add.overlap(this.redKing, this.terrainGroup, this.kingHitTerrain, null, this);
+    scene.physics.add.overlap(scene.blueKing, scene.terrainGroup, scene.kingHitTerrain, null, scene);
+    scene.physics.add.overlap(scene.redKing, scene.terrainGroup, scene.kingHitTerrain, null, scene);
   };
 }

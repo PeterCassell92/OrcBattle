@@ -3,35 +3,35 @@
  * @param {*} SceneClass
  */
 export function applyInitialCeaseFirePhaseMethods(SceneClass) {
-    SceneClass.prototype.checkFiringDelay = function () {
-        if (this.firingAllowed) return;
+  SceneClass.prototype.checkFiringDelay = function () {
+    if (this.firingAllowed) return;
 
-        const gameTime = Date.now() - this.gameStartTime;
-        if (gameTime >= this.firingDelayTime) {
-            this.firingAllowed = true;
-            console.log('Firing delay ended - orcs can now shoot!');
+    const gameTime = Date.now() - this.gameStartTime;
+    if (gameTime >= this.firingDelayTime) {
+      this.firingAllowed = true;
+      console.log('Firing delay ended - orcs can now shoot!');
 
-            // Add visual notification
-            const readyText = this.add
-                .text(400, 150, 'BATTLE BEGINS!', {
-                    fontSize: '24px',
-                    fill: '#FFD700',
-                    fontWeight: 'bold',
-                    stroke: '#000',
-                    strokeThickness: 3,
-                })
-                .setOrigin(0.5);
+      // Add visual notification
+      const readyText = this.add
+        .text(400, 150, 'BATTLE BEGINS!', {
+          fontSize: '24px',
+          fill: '#FFD700',
+          fontWeight: 'bold',
+          stroke: '#000',
+          strokeThickness: 3,
+        })
+        .setOrigin(0.5);
 
-            this.tweens.add({
-                targets: readyText,
-                scale: 1.3,
-                alpha: 0,
-                duration: 1500,
-                ease: 'Power2.out',
-                onComplete: () => readyText.destroy(),
-            });
-        }
-    };
+      this.tweens.add({
+        targets: readyText,
+        scale: 1.3,
+        alpha: 0,
+        duration: 1500,
+        ease: 'Power2.out',
+        onComplete: () => readyText.destroy(),
+      });
+    }
+  };
 }
 
 /**
@@ -41,59 +41,58 @@ export function applyInitialCeaseFirePhaseMethods(SceneClass) {
  * @returns
  */
 export function applyCoverFirersAdvancePhaseMethods(SceneClass) {
-    SceneClass.prototype.checkCoverFirerAdvancement = function () {
-        this.checkTeamCoverFirerAdvancement(this.blueOrcs, 'blue');
-        this.checkTeamCoverFirerAdvancement(this.redOrcs, 'red');
-    };
+  SceneClass.prototype.checkCoverFirerAdvancement = function () {
+    this.checkTeamCoverFirerAdvancement(this.blueOrcs, 'blue');
+    this.checkTeamCoverFirerAdvancement(this.redOrcs, 'red');
+  };
 
-    //TODO: review this logic
-    SceneClass.prototype.checkTeamCoverFirerAdvancement = function (teamOrcs, teamName) {
-        const activeOrcs = teamOrcs.filter(orc => orc.active);
-        const rushers = activeOrcs.filter(orc => orc.behaviour === 'rusher');
-        const coverFirers = activeOrcs.filter(orc => orc.behaviour === 'cover_firer');
+  //TODO: review this logic
+  SceneClass.prototype.checkTeamCoverFirerAdvancement = function (teamOrcs, teamName) {
+    const activeOrcs = teamOrcs.filter((orc) => orc.active);
+    const rushers = activeOrcs.filter((orc) => orc.behaviour === 'rusher');
+    const coverFirers = activeOrcs.filter((orc) => orc.behaviour === 'cover_firer');
 
-        if (rushers.length === 0 && coverFirers.length === 0) return;
+    if (rushers.length === 0 && coverFirers.length === 0) return;
 
-        const gameTime = (Date.now() - this.gameStartTime) / 1000;
-        let stripThreshold;
+    const gameTime = (Date.now() - this.gameStartTime) / 1000;
+    let stripThreshold;
 
-        if (gameTime >= 12) {
-            if (coverFirers.length) {
-                console.log('Aggression reached - All Units Rushers');
-            }
+    if (gameTime >= 12) {
+      if (coverFirers.length) {
+        console.log('Aggression reached - All Units Rushers');
+      }
 
-            coverFirers.forEach(coverFirer => {
-                if (coverFirer.behaviour === 'cover_firer') {
-                    coverFirer.convertToRusher();
-                }
-            });
-            return;
-        } else if (gameTime >= 6) {
-            stripThreshold = 1;
-        } else if (gameTime >= 2) {
-            stripThreshold = 2;
-        } else {
-            stripThreshold = 3;
+      coverFirers.forEach((coverFirer) => {
+        if (coverFirer.behaviour === 'cover_firer') {
+          coverFirer.convertToRusher();
         }
+      });
+      return;
+    } else if (gameTime >= 6) {
+      stripThreshold = 1;
+    } else if (gameTime >= 2) {
+      stripThreshold = 2;
+    } else {
+      stripThreshold = 3;
+    }
 
-        if (coverFirers.length === 0) return;
+    if (coverFirers.length === 0) return;
 
-        const rusherStrips = rushers.map(orc => orc.combatStrip);
-        const avgRusherStrip =
-            rushers.length > 0 ? rusherStrips.reduce((sum, strip) => sum + strip, 0) / rusherStrips.length : 0;
+    const rusherStrips = rushers.map((orc) => orc.combatStrip);
+    const avgRusherStrip = rushers.length > 0 ? rusherStrips.reduce((sum, strip) => sum + strip, 0) / rusherStrips.length : 0;
 
-        coverFirers.forEach(coverFirer => {
-            if (coverFirer.behaviour !== 'cover_firer') return;
+    coverFirers.forEach((coverFirer) => {
+      if (coverFirer.behaviour !== 'cover_firer') return;
 
-            const stripDifference = Math.abs(avgRusherStrip - coverFirer.combatStrip);
+      const stripDifference = Math.abs(avgRusherStrip - coverFirer.combatStrip);
 
-            if (stripDifference > stripThreshold) {
-                if (teamName === 'blue' && avgRusherStrip > coverFirer.combatStrip + stripThreshold) {
-                    coverFirer.setCoverFirerAdvanceWaypoint(avgRusherStrip - 1);
-                } else if (teamName === 'red' && avgRusherStrip < coverFirer.combatStrip - stripThreshold) {
-                    coverFirer.setCoverFirerAdvanceWaypoint(avgRusherStrip + 1);
-                }
-            }
-        });
-    };
+      if (stripDifference > stripThreshold) {
+        if (teamName === 'blue' && avgRusherStrip > coverFirer.combatStrip + stripThreshold) {
+          coverFirer.setCoverFirerAdvanceWaypoint(avgRusherStrip - 1);
+        } else if (teamName === 'red' && avgRusherStrip < coverFirer.combatStrip - stripThreshold) {
+          coverFirer.setCoverFirerAdvanceWaypoint(avgRusherStrip + 1);
+        }
+      }
+    });
+  };
 }

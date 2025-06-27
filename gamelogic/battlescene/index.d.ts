@@ -24,6 +24,9 @@ export interface IKing extends Phaser.Physics.Arcade.Sprite {
     lastTargetScanTime: number;
     targetScanInterval: number;
     
+    // Combat strip system reference
+    combatStripWidth: number;
+    
     // Marching properties
     marching: boolean;
     marchSpeed: number;
@@ -66,6 +69,9 @@ export interface IKing extends Phaser.Physics.Arcade.Sprite {
     headSideMotionSpeed?: number;
     headSideMotionAmount?: number;
     
+    // Background decorations reference (needed for shrub targeting)
+    backgroundDecorations: IDecoration[];
+    
     // Methods
     generateFireballInterval(): number;
     generateChargeDuration(): number;
@@ -79,7 +85,7 @@ export interface IKing extends Phaser.Physics.Arcade.Sprite {
     tauntOpposingArmy(): void;
     findFireballTargetNearAlcove(alcoveTeam: TeamType): Position;
     isFireballTargetInvalid(targetX: number, targetY: number, enemyTeam: TeamType): boolean;
-    findNearestShrubToAlcove(alcoveTeam: TeamType): any;
+    findNearestShrubToAlcove(alcoveTeam: TeamType): IDecoration | null;
     launchFireball(): void;
     dodgeIncomingFireball(fireballTargetX: number, fireballTargetY: number): void;
     setMarchWaypoints(): void;
@@ -90,6 +96,7 @@ export interface IKing extends Phaser.Physics.Arcade.Sprite {
     updateKingFireball(time: number): void;
     createFireballChargeEffect(): void;
     cleanupSprites(): void;
+    destroy(): void;
 }
 
 // === DECORATION INTERFACES ===
@@ -229,6 +236,69 @@ export interface IBattleScene extends Phaser.Scene, IPhysicsGroups, IBerserkerSy
     // === KNOCKBACK METHODS ===
     checkRoyalKnockback(x: number, y: number): void;
     checkTerrainKnockback(x: number, y: number, attacker: IOrc): void;
+    applyOrcKnockback(orc: IOrc, explosionX: number, explosionY: number, distance: number): void;
+    applyRoyalKnockback(orc: IOrc, explosionX: number, explosionY: number, distance: number): void;
+    
+    // === BERSERKER PHASE METHODS ===
+    transitionToInvisibility(): void;
+    transitionToBerserker(): void;
+    activateBerserkerTrio(team: TeamType, orcs: IOrc[], strengthBonus: number): void;
+    restoreNormalOrcAttacking(): void;
+    applyEmergencyImmunity(orcs: IOrc[]): void;
+    
+    // === KING RELEASE METHODS ===
+    prepareKingForMarch(king: IKing): void;
+    releaseKings(): void;
+    
+    // === VICTORY PHASE METHODS ===
+    sacrificeKing(team: TeamType): void;
+    startVictoryCeremony(winningTeam: TeamType): void;
+    updateVictoryCeremony(time: number, delta: number): void;
+    startOrcCelebration(winningTeam: TeamType): void;
+    startOrcSpeech(orc: IOrc, teamNumber: string, orcIndex: number): void;
+    burnLosingFlag(losingTeam: TeamType): void;
+    createFireAnimation(flag: Phaser.GameObjects.Sprite, numberText: Phaser.GameObjects.Text): void;
+    cleanseBloodstainsDuringVictory(): void;
+    createRoyalCleansingEffect(): void;
+    createCleansingSparkle(x: number, y: number): void;
+    
+    // === TERRAIN GENERATION METHODS ===
+    createKingSprites(): void;
+    createAxeSprite(): void;
+    createRockChunkSprite(): void;
+    createBlockChunkSprite(): void;
+    createGrassTuftSprite(): void;
+    createShrubSprite(): void;
+    generateRandomTerrain(): void;
+    generateGrassTufts(safeZones: Array<{x: number, y: number, radius: number}>): void;
+    generateShrubs(safeZones: Array<{x: number, y: number, radius: number}>): void;
+    createTerrainPiece(x: number, y: number): void;
+    tryCreateBlockPair(originalX: number, originalY: number): void;
+    
+    // === ZONE VALIDATION METHODS ===
+    isValidTerrainPosition(x: number, y: number): boolean;
+    
+    // === BATTLEFIELD STATE METHODS ===
+    cleanupPendingTimeouts(): void;
+    
+    // === ADDITIONAL PROPERTIES FOR VICTORY PHASE ===
+    marchingKing?: IKing;
+    celebratingOrcs?: IOrc[];
+    victoryPhase?: 'king_marching' | 'orc_celebrating';
+    
+    // === ALCOVE WALLS ===
+    blueAlcoveWalls: Phaser.Physics.Arcade.StaticGroup;
+    redAlcoveWalls: Phaser.Physics.Arcade.StaticGroup;
+    
+    // === FLAGS AND UI ===
+    blueFlag: Phaser.GameObjects.Sprite;
+    redFlag: Phaser.GameObjects.Sprite;
+    blueNumberText: Phaser.GameObjects.Text;
+    redNumberText: Phaser.GameObjects.Text;
+    
+    // === FIRE EFFECTS (for victory) ===
+    disableFireParticles?: boolean;
+    fireParticleErrors?: number;
     
     // === ZONE AND BATTLEFIELD METHODS ===
     isLocationInEnemyAlcovesOrOOB(x: number, y: number, enemyTeam: TeamType): boolean;
@@ -236,6 +306,7 @@ export interface IBattleScene extends Phaser.Scene, IPhysicsGroups, IBerserkerSy
     
     // === BLOOD STAIN MANAGEMENT ===
     createBloodStain(x: number, y: number): void;
+    cleanupBloodStains(): void;
 }
 
 // === GAME CONFIG INTERFACE ===
