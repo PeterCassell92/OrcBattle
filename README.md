@@ -118,10 +118,10 @@ npm run format:check
 Open `Orcs.html` in a browser or use a local server.
 
 ## Running the Game in Mac/Linux
-Make sure have done steps as above (clone, npm install)
-Make 'start-server.sh' executable with command:  chmod +x start-server.sh
-Run 'start-server.sh' with command: ./start_server.sh
-Go to 'http://localhost:8000/Orcs.html' in browser
+- Make sure have done steps as above (clone, npm install)
+- Make 'start-server.sh' executable with command:  chmod +x start-server.sh
+- Run 'start-server.sh' with command: ./start_server.sh
+- Go to 'http://localhost:8000/Orcs.html' in browser
 
 
 ## Contributing 🤝
