@@ -1,8 +1,66 @@
 # Orcs Battle Game 🏰⚔️
 
-A Phaser 3 battle simulation game featuring orc armies, kings, and epic fireball combat!
+A Phaser 3 battle simulation game for **deciding 50:50 outcomes through epic orc combat**! 
 
-## Setup for Development
+Instead of flipping a coin, watch two orc armies clash in strategic warfare complete with kings, fireballs, berserkers, and victory ceremonies. Each battle is designed to be roughly balanced while providing entertaining visual spectacle.
+
+## Project Philosophy 📋
+
+This project demonstrates **good JavaScript practices** for game development:
+- **Small, focused files** - Each file has a single responsibility for easy AI parsing
+- **Modular architecture** - Components are composable and reusable
+- **Clean separation** - Game logic, rendering, and data are properly separated
+- **Consistent patterns** - Similar structures across all modules
+
+## Project Structure
+```
+gamelogic/
+├── main.js             # Entry point and game initialization
+├── setup.js            # Game configuration and user settings
+├── battlescene/        # Main battle scene and components
+│   ├── battlescene.js  # Core game loops and scene management
+│   ├── index.js        # Composite scene assembly from modules
+│   ├── king/           # King behavior and fireball combat
+│   │   ├── king.js     # King class with marching and combat
+│   │   └── fireball.js # Fireball projectile with arc physics
+│   ├── phases/         # Game phase management (modular)
+│   │   ├── initial-phases.js    # Ceasefire and cover firer phases
+│   │   ├── king-release-phase.js # Kings enter battlefield
+│   │   ├── berserker-phase.js   # Berserker trio activation
+│   │   └── victory-phase.js     # Victory ceremony and celebration
+│   ├── collisions.js   # Collision detection and handling
+│   ├── effects.js      # Visual effects and animations
+│   └── knockback.js    # Physics knockback effects
+├── orc/                # Orc classes and AI behavior
+│   ├── index.js        # Composite orc assembly
+│   ├── orc.js          # Main orc class
+│   ├── orc-behaviour.js # AI movement and combat logic
+│   └── orc-dialog.js   # Speech and communication system
+├── sprites/            # Sprite generation and management
+│   ├── spriteGenerator.js # Procedural sprite creation
+│   ├── bloodstain.js   # Persistent battle aftermath
+│   ├── rock.js         # Destructible rock terrain
+│   └── block.js        # Destructible block terrain
+└── dialogUI/           # User interface components
+    └── speechbubble.js # Dynamic speech bubble system
+```
+
+## Game Features 🎮
+
+### Battle Phases
+1. **Ceasefire** - Initial pause before combat begins
+2. **Laser Battle** - Cover firers provide ranged support
+3. **Royal March** - Kings enter the battlefield with fireballs
+4. **Berserker Phase** - Losing team gets powerful berserkers
+5. **Victory Ceremony** - Winning team celebrates with speeches
+
+### Combat Mechanics
+- **Balanced RNG** - Carefully tuned for ~50:50 outcomes
+- **Strategic AI** - Orcs use cover, advance tactically
+- **Environmental destruction** - Terrain can be destroyed
+- **Visual effects** - Explosions, fire, bloodstains, particles
+
+## Setup for Development 🛠️
 
 ### Prerequisites
 - Node.js (for ESLint and Prettier)
@@ -35,25 +93,29 @@ npm run format
 npm run format:check
 ```
 
-### Development Guidelines
-- Code will auto-format on save in VS Code
-- ESLint will show errors and warnings in real-time
-- Fix ESLint errors before committing
-- Use `console.log` sparingly (will show warnings)
-- Prefer `const` over `let`, avoid `var`
+## Development Guidelines 📝
+
+### Code Quality
+- **Code auto-formats** on save in VS Code
+- **ESLint shows errors** and warnings in real-time
+- **Fix ESLint errors** before committing
+- **Small files preferred** - easier for AI tools to parse and understand
+
+### JavaScript Best Practices
+- Use `const` over `let`, avoid `var`
 - Always use `===` instead of `==`
+- Keep functions focused and single-purpose
+- Use descriptive variable and function names
+- Add comments for complex game logic
 
-### Project Structure
-```
-gamelogic/
-├── battlescene/        # Main battle scene and components
-│   ├── king/          # King class and fireball logic
-│   ├── phases/        # Game phases (victory, berserker, etc.)
-│   └── index.js       # Scene assembly
-├── orc/               # Orc classes and behavior
-├── sprites/           # Sprite generation and management
-└── main.js            # Entry point
-```
+### File Organization
+- **One class per file** when possible
+- **Modular exports** - use named exports for clarity
+- **Consistent structure** across similar files
+- **Logical grouping** - related functionality stays together
 
-## Running the Game
+## Running the Game 🚀
 Open `Orcs.html` in a browser or use a local server.
+
+## Contributing 🤝
+This project is designed for **team collaboration** with developers of varying experience levels. The modular structure and linting setup help maintain code quality while teaching good JavaScript practices.
