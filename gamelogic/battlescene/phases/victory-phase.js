@@ -98,6 +98,11 @@ export function applyVictoryPhaseMethods(SceneClass) {
       repeat: -1,
     });
 
+    // Trigger mobile button expansion after victory (2 second delay)
+    if (window.triggerVictoryButtonExpansion) {
+      window.triggerVictoryButtonExpansion();
+    }
+
     // Majestic march to center
     scene.tweens.add({
       targets: winningKing,

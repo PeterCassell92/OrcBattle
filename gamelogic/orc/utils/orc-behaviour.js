@@ -979,6 +979,9 @@ export const OrcBehaviour = {
 
       if (orc.body && orc.active) {
         orc.setVelocity(moveX, moveY);
+        
+        // Extra boundary enforcement for fast-moving invisible berserkers
+        scene.enforceWorldBoundaries(orc);
       }
 
       // Update body rotation towards movement

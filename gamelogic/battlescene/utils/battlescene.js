@@ -80,7 +80,7 @@ export class BattleScene extends Phaser.Scene {
     scene.cleanupBloodStains();
 
     // Reset any berserker collision states from previous games
-    scene.resetAllCollisionStates();
+    //scene.resetAllCollisionStates();
 
     // Firing delay system - no one can fire for first 1 second
     this.firingAllowed = false;
@@ -170,6 +170,9 @@ export class BattleScene extends Phaser.Scene {
 
       if (this.blueKing.released) {
         this.blueKing.updateKingMarch(time);
+        // Enforce boundaries for marching king
+        scene.enforceWorldBoundaries(this.blueKing);
+        scene.validateOrcPosition(this.blueKing);
       }
     }
     if (this.redKing && this.redKing.alive) {
@@ -179,6 +182,9 @@ export class BattleScene extends Phaser.Scene {
 
       if (this.redKing.released) {
         this.redKing.updateKingMarch(time);
+        // Enforce boundaries for marching king
+        scene.enforceWorldBoundaries(this.redKing);
+        scene.validateOrcPosition(this.redKing);
       }
     }
 
@@ -209,7 +215,16 @@ export class BattleScene extends Phaser.Scene {
 
     [...this.blueOrcs, ...this.redOrcs].forEach((orc) => {
       if (orc.active) {
+        // First validate and correct orc position if needed
+        scene.validateOrcPosition(orc);
+
+        // Run AI behavior
         OrcBehaviour.updateOrcAI(this, orc, time);
+
+        // Enforce world boundaries after AI movement
+        scene.enforceWorldBoundaries(orc);
+
+        // Check if orc is stuck
         OrcBehaviour.checkIfOrcStuck(this, orc, time);
       }
     });

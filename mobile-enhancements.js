@@ -106,9 +106,58 @@ document.addEventListener('DOMContentLoaded', () => {
       characterData: true
     });
     
-    // Initial sync
-    syncMobileWarriorCounts();
+  // Initial sync
+  syncMobileWarriorCounts();
+}
+
+// Function to expand button bar after victory
+function expandButtonBar() {
+  const mobileButtons = document.querySelector('.mobile-buttons');
+  const mobileGameButtons = document.querySelectorAll('.mobile-game-button');
+  
+  if (mobileButtons && mobileGameButtons.length > 0) {
+    // Add expanded class to container
+    mobileButtons.classList.add('expanded');
+    
+    // Add expanded class to individual buttons
+    mobileGameButtons.forEach(button => {
+      button.classList.add('expanded');
+    });
+    
+    console.log('Mobile button bar expanded after victory!');
   }
+}
+
+// Function to trigger button expansion after victory (2 second delay)
+function triggerVictoryButtonExpansion() {
+  console.log('Victory detected, expanding buttons in 2 seconds...');
+  setTimeout(() => {
+    expandButtonBar();
+  }, 2000);
+}
+
+// Function to collapse button bar (reset to icon mode)
+function collapseButtonBar() {
+  const mobileButtons = document.querySelector('.mobile-buttons');
+  const mobileGameButtons = document.querySelectorAll('.mobile-game-button');
+  
+  if (mobileButtons && mobileGameButtons.length > 0) {
+    // Remove expanded class from container
+    mobileButtons.classList.remove('expanded');
+    
+    // Remove expanded class from individual buttons
+    mobileGameButtons.forEach(button => {
+      button.classList.remove('expanded');
+    });
+    
+    console.log('Mobile button bar collapsed to icon mode');
+  }
+}
+
+// Make functions available globally for game to call
+window.expandButtonBar = expandButtonBar;
+window.triggerVictoryButtonExpansion = triggerVictoryButtonExpansion;
+window.collapseButtonBar = collapseButtonBar;
 
   // Prevent zoom on double tap
   let lastTouchEnd = 0;

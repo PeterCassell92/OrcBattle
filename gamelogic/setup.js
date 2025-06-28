@@ -38,12 +38,21 @@ export function startBattle() {
 
   // Import and start the game dynamically
   import('./battlescene/index.js').then(({ startGame }) => {
+    // Collapse mobile button bar when starting new game
+    if (window.collapseButtonBar) {
+      window.collapseButtonBar();
+    }
     startGame();
   });
 }
 
 export function replayBattle() {
   console.log('Replaying battle with same settings:', userSettings);
+
+  // Collapse mobile button bar when replaying
+  if (window.collapseButtonBar) {
+    window.collapseButtonBar();
+  }
 
   // Destroy current game if it exists
   if (window.game) {
