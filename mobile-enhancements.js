@@ -60,6 +60,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Update mobile warrior counts when desktop counts change
+  function syncMobileWarriorCounts() {
+    const blueCount = document.getElementById('blue-count');
+    const redCount = document.getElementById('red-count');
+    const mobileBlueCount = document.getElementById('mobile-blue-count');
+    const mobileRedCount = document.getElementById('mobile-red-count');
+    
+    if (blueCount && mobileBlueCount) {
+      // Extract just the number from "X Warriors + King"
+      const blueText = blueCount.textContent;
+      const blueNumber = blueText.match(/\d+/);
+      if (blueNumber) {
+        mobileBlueCount.textContent = blueNumber[0];
+      }
+    }
+    
+    if (redCount && mobileRedCount) {
+      // Extract just the number from "X Warriors + King"
+      const redText = redCount.textContent;
+      const redNumber = redText.match(/\d+/);
+      if (redNumber) {
+        mobileRedCount.textContent = redNumber[0];
+      }
+    }
+  }
+  
+  // Set up observers to watch for changes in warrior counts
+  const blueCountElement = document.getElementById('blue-count');
+  const redCountElement = document.getElementById('red-count');
+  
+  if (blueCountElement && redCountElement) {
+    // Use MutationObserver to watch for text changes
+    const observer = new MutationObserver(syncMobileWarriorCounts);
+    
+    observer.observe(blueCountElement, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+    
+    observer.observe(redCountElement, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+    
+    // Initial sync
+    syncMobileWarriorCounts();
+  }
+
   // Prevent zoom on double tap
   let lastTouchEnd = 0;
   document.addEventListener('touchend', (event) => {

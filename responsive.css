@@ -86,6 +86,13 @@ body {
     padding: 8px 5px;
 }
 
+@media (max-width: 580px) {
+    #game-container {
+        font-size: medium;
+        border-radius: 2px;
+    }
+}
+
 .team-status {
     display: flex;
     width: 100%;
@@ -123,7 +130,7 @@ body {
 
 @media (max-width: 600px) {
     .team h3 {
-        font-size: 1em;
+        font-size: medium;
         margin: 0 0 3px 0;
     }
     
@@ -132,7 +139,7 @@ body {
     }
     
     #game-timer {
-        font-size: 12px;
+        font-size: 10px;
     }
 }
 
@@ -602,7 +609,15 @@ body {
     display: block;
 }
 
+.desktop-warrior-count {
+    display: block;
+}
+
 .mobile-buttons {
+    display: none;
+}
+
+.mobile-warrior-counts {
     display: none;
 }
 
@@ -616,8 +631,51 @@ body {
         display: none;
     }
     
+    .desktop-warrior-count {
+        display: none;
+    }
+    
     .game-controls {
         display: none;
+    }
+    
+    .mobile-warrior-counts {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 15;
+    }
+    
+    .mobile-count {
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .mobile-count-blue {
+        top: 8px;
+        left: 8px;
+        background: rgba(52, 152, 219, 0.9);
+    }
+    
+    .mobile-count-red {
+        top: 8px;
+        right: 8px;
+        background: rgba(231, 76, 60, 0.9);
     }
     
     .mobile-buttons {
