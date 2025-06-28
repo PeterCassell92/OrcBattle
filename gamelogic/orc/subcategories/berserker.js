@@ -36,14 +36,15 @@ export function applyBerserkerFeatures(OrcClass) {
     if (this.head) this.head.clearTint();
 
     // Set berserker stats
-    this.health = 3.5 + (this.berserkerStrengthBonus / 3 || 0);
+    this.health = 4.5 + (this.berserkerStrengthBonus / 3 || 0);
+    this.maxHealth = this.health; // Store maximum health for health bar calculations
 
     this.maxLaserResistance = 0.95;
     this.minLaserResistance = 0.25;
     this.laserResistance = 0.6 + 0.1 * (this.berserkerStrengthBonus || 0); // 50% chance to resist + 10% per bonus
     this.deflectionsCount = 0; // Track total deflections
     this.deflectionsThisDecay = 0; // Track deflections since last decay
-    this.resistanceDecayRate = 0.5 + 2.5 * this.berserkerStrengthBonus; //shots deflected to lose the decay amount
+    this.resistanceDecayRate = 2.5 + 2.6 * this.berserkerStrengthBonus; //shots deflected to lose the decay amount
     this.resistanceDecayAmount = 0.175 - ((1.8 * this.berserkerStrengthBonus) / 100); //Lose resistance in chunks
     this.canUseLaser = false; // Cannot use laser attacks
     this.hasSwordAttack = true; // Must use sword attacks
@@ -71,6 +72,12 @@ export function applyBerserkerFeatures(OrcClass) {
     if (this.unitInfoLabel) {
       this.updateBerserkerUnitInfo();
     }
+
+    // Create berserker health bar
+    this.createBerserkerHealthBar();
+
+    // Create invulnerability indicator (initially hidden)
+    this.createInvulnerabilityIndicator();
   };
 
   OrcClass.prototype.handleBerserkerDeflection = function () {
@@ -226,6 +233,106 @@ export function applyBerserkerFeatures(OrcClass) {
     return color;
   };
 
+  OrcClass.prototype.createBerserkerHealthBar = function () {
+    if (this.type !== 'berserker') return;
+
+    // Health bar dimensions
+    const barWidth = 24;
+    const barHeight = 4;
+    const barX = this.x - barWidth / 2;
+    const barY = this.y - 35; // Above the orc
+
+    // Create background (dark gray)
+    this.healthBarBg = this.scene.add.rectangle(barX, barY, barWidth, barHeight, 0x333333);
+    this.healthBarBg.setDepth(5);
+
+    // Create health bar (initially full and green)
+    this.healthBar = this.scene.add.rectangle(barX, barY, barWidth, barHeight, 0x00ff00);
+    this.healthBar.setDepth(6);
+
+    // Update health bar to current health
+    this.updateBerserkerHealthBar();
+  };
+
+  OrcClass.prototype.updateBerserkerHealthBar = function () {
+    if (this.type !== 'berserker' || !this.healthBar || !this.healthBarBg) return;
+
+    // Calculate health percentage
+    const healthPercent = Math.max(0, this.health / this.maxHealth);
+
+    // Calculate bar width based on health
+    const maxBarWidth = 24;
+    const currentBarWidth = maxBarWidth * healthPercent;
+
+    // Update bar width
+    this.healthBar.setSize(currentBarWidth, 4);
+
+    // Calculate health color (green to red gradient)
+    let healthColor;
+    if (healthPercent > 0.6) {
+      // Green to yellow (high health)
+      const greenToYellow = (1 - healthPercent) / 0.4; // 0 to 1 as health goes from 100% to 60%
+      const red = Math.floor(255 * greenToYellow);
+      healthColor = (red << 16) | (255 << 8) | 0; // RGB: red, 255, 0
+    } else {
+      // Yellow to red (low health)
+      const yellowToRed = healthPercent / 0.6; // 0 to 1 as health goes from 0% to 60%
+      const green = Math.floor(255 * yellowToRed);
+      healthColor = (255 << 16) | (green << 8) | 0; // RGB: 255, green, 0
+    }
+
+    // Apply color
+    this.healthBar.setFillStyle(healthColor);
+
+    // Position the bar (left-aligned)
+    const barX = this.x - maxBarWidth / 2 + currentBarWidth / 2;
+    this.healthBar.setPosition(barX, this.y - 35);
+    this.healthBarBg.setPosition(this.x, this.y - 35);
+  };
+
+  OrcClass.prototype.createInvulnerabilityIndicator = function () {
+    // Create a small asterisk to indicate invulnerability
+    this.invulnerabilityIndicator = this.scene.add.text(this.x + 15, this.y - 30, '*', {
+      fontSize: '14px',
+      fill: '#ffff00', // Bright yellow
+      fontWeight: 'bold',
+      stroke: '#000000',
+      strokeThickness: 2,
+    }).setOrigin(0.5);
+
+    this.invulnerabilityIndicator.setDepth(7);
+    this.invulnerabilityIndicator.setVisible(false); // Initially hidden
+
+    // Add pulsing animation
+    this.scene.tweens.add({
+      targets: this.invulnerabilityIndicator,
+      scale: 1.3,
+      duration: 500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+  };
+
+  OrcClass.prototype.updateInvulnerabilityIndicator = function () {
+    if (!this.invulnerabilityIndicator) return;
+
+    // Show indicator if orc is invulnerable in any way
+    const isInvulnerable = this.immuneToDamage || this.invulnerableWhileInvisible;
+    this.invulnerabilityIndicator.setVisible(isInvulnerable);
+
+    // Update position
+    this.invulnerabilityIndicator.setPosition(this.x + 15, this.y - 30);
+  };
+
+  OrcClass.prototype.syncBerserkerSprites = function () {
+    // Update health bar position
+    this.updateBerserkerHealthBar();
+
+    // Update invulnerability indicator
+    this.updateInvulnerabilityIndicator();
+  };
+
   OrcClass.prototype.updateBerserkerUnitInfo = function () {
     // Create multi-line text for berserker with strength bonus info and fire rate
     const strengthBonus = this.berserkerStrengthBonus || 0;
@@ -283,6 +390,12 @@ export function applyBerserkerFeatures(OrcClass) {
       yoyo: true,
       onComplete() {
         target.clearTint();
+
+        // Update health bar if target is a berserker
+        if (target.type === 'berserker' && target.updateBerserkerHealthBar) {
+          target.updateBerserkerHealthBar();
+        }
+
         if (target.health <= 0) {
           // console.log(`${target.team} orc died from sword damage - health: ${target.health}`);
           target.attemptDie();
@@ -445,6 +558,22 @@ export function applyBerserkerFeatures(OrcClass) {
 
     // Clean up invisibility effects
     this.scene.removeInvisibilityEffect(this);
+
+    // Clean up berserker UI elements
+    if (this.healthBar) {
+      this.healthBar.destroy();
+      this.healthBar = null;
+    }
+
+    if (this.healthBarBg) {
+      this.healthBarBg.destroy();
+      this.healthBarBg = null;
+    }
+
+    if (this.invulnerabilityIndicator) {
+      this.invulnerabilityIndicator.destroy();
+      this.invulnerabilityIndicator = null;
+    }
 
     // Re-enable collisions if they were disabled
     if (this.collisionsDisabled) {

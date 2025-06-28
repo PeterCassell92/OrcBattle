@@ -335,6 +335,24 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
       this.dialog.destroy();
       this.dialog = null;
     }
+    
+    // Clean up berserker sprites if this is a berserker
+    if (this.type === 'berserker') {
+      if (this.healthBar) {
+        this.healthBar.destroy();
+        this.healthBar = null;
+      }
+      
+      if (this.healthBarBg) {
+        this.healthBarBg.destroy();
+        this.healthBarBg = null;
+      }
+      
+      if (this.invulnerabilityIndicator) {
+        this.invulnerabilityIndicator.destroy();
+        this.invulnerabilityIndicator = null;
+      }
+    }
   }
 
   move(x, y) {
@@ -418,6 +436,11 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
     // Update speech bubble
     if (this.dialog) {
       this.dialog.update();
+    }
+    
+    // Sync berserker-specific sprites (health bar and invulnerability indicator)
+    if (this.type === 'berserker' && this.syncBerserkerSprites) {
+      this.syncBerserkerSprites();
     }
   }
 

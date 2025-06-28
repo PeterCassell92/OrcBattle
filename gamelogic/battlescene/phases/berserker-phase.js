@@ -248,6 +248,14 @@ export function applyBerserkerPhaseMethods(SceneClass) {
         orc.headTurnSpeed = 3.5;
         orc.moveSpeed += 40;
       });
+
+      setTimeout(() => {
+        nonberserkerCandidates.forEach((orc) => {
+          if (orc.active) {
+            orc.fireRate -= 100;
+          }
+        });
+      }, 7500);
     }
   };
 

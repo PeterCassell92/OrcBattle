@@ -81,6 +81,12 @@ export function applyCollisionMethods(SceneClass) {
       yoyo: true,
       onComplete: () => {
         orc.clearTint();
+        
+        // Update health bar if orc is a berserker
+        if (orc.type === 'berserker' && orc.updateBerserkerHealthBar) {
+          orc.updateBerserkerHealthBar();
+        }
+        
         if (orc.health <= 0) {
           // console.log(`${orc.team} orc died - health: ${orc.health}`);
           orc.attemptDie();

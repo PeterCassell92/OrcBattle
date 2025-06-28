@@ -1,3 +1,8 @@
+/**
+ * @typedef {import('../index.js').IOrc} IOrc
+ * @typedef {import('../../battlescene/index.js').IBattleScene} IBattleScene
+ */
+
 // Orc AI Behaviour and combat logic
 
 export const OrcBehaviour = {
@@ -50,7 +55,7 @@ export const OrcBehaviour = {
       this.updateCoverFirerScouting(scene, orc, activeEnemies, time);
       return;
     }
-
+    /** @type {IOrc} */
     let closestEnemy = null;
     let closestDistance = Infinity;
 
@@ -827,12 +832,35 @@ export const OrcBehaviour = {
     const baseTime = time * 0.001;
     const orcId = orc.x + orc.y;
 
+    // Initialize strafe direction change tracking if not exists
+    if (!orc.lastStrafeDirectionChange) {
+      orc.lastStrafeDirectionChange = 0;
+      orc.strafeDirectionChangeMinThreshold = 500 + Math.random() * 100; // 500-600ms
+      orc.currentStrafeDirection = Math.sin(baseTime * (2 + (orcId % 3)) + orcId); // Initial direction
+    }
+
     const strafeIntensity = 0.7;
     const strafeFrequency = 2 + (orcId % 3);
-    const strafeDirection = Math.sin(baseTime * strafeFrequency + orcId);
+
+    // Calculate what the new strafe direction would be
+    const newStrafeDirection = Math.sin(baseTime * strafeFrequency + orcId);
+
+    // Check if we should update strafe direction (if enough time has passed)
+    if (time - orc.lastStrafeDirectionChange > orc.strafeDirectionChangeMinThreshold) {
+      // Check if direction would actually change significantly (avoid micro-changes)
+      const directionChange = Math.abs(newStrafeDirection - orc.currentStrafeDirection);
+      if (directionChange > 0.3) { // Only change if significant difference
+        orc.currentStrafeDirection = newStrafeDirection;
+        orc.lastStrafeDirectionChange = time;
+        // Generate new threshold for next change
+        orc.strafeDirectionChangeMinThreshold = 800 + Math.random() * 100;
+      }
+    }
+
+    // Use the current (possibly unchanged) strafe direction
     const strafeAngle = orc.rotation + Math.PI / 2;
-    const strafeX = Math.cos(strafeAngle) * strafeDirection * orc.moveSpeed * strafeIntensity;
-    const strafeY = Math.sin(strafeAngle) * strafeDirection * orc.moveSpeed * strafeIntensity;
+    const strafeX = Math.cos(strafeAngle) * orc.currentStrafeDirection * orc.moveSpeed * strafeIntensity;
+    const strafeY = Math.sin(strafeAngle) * orc.currentStrafeDirection * orc.moveSpeed * strafeIntensity;
 
     const advanceIntensity = 0.3;
     let advanceDirection = 0;
@@ -979,7 +1007,7 @@ export const OrcBehaviour = {
 
       if (orc.body && orc.active) {
         orc.setVelocity(moveX, moveY);
-        
+
         // Extra boundary enforcement for fast-moving invisible berserkers
         scene.enforceWorldBoundaries(orc);
       }
