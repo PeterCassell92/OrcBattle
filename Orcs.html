@@ -2,206 +2,168 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Orc Battle Arena</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.70.0/phaser.min.js"></script>
+    <link rel="stylesheet" href="responsive.css">
     <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            background: #2c3e50;
-            color: white;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        /* Keep critical inline styles for performance */
+        #setup-screen.hidden {
+            display: none !important;
         }
-        #game-container {
-            border: 2px solid #34495e;
-            border-radius: 8px;
-            position: relative;
-        }
-        .info {
-            margin: 2px 6px;
-            text-align: center;
-            position: absolute;
-            top: -50px;
-            width: 100%;
-        }
-        .team-status {
-            display: flex;
-            width: 100%;
-            justify-content: space-between;
-        }
-        .team {
-            text-align: center;
-        }
-        .team-blue { color: #3498db; }
-        .team-red { color: #e74c3c; }
-        .setup-screen {
-            background: #34495e;
-            padding: 30px;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: center;
-        }
-        .team-setup {
-            display: flex;
-            gap: 50px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        .team-input {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        .team-input input {
-            padding: 10px;
-            font-size: 18px;
-            text-align: center;
-            border: 2px solid #7f8c8d;
-            border-radius: 5px;
-            background: #2c3e50;
-            color: white;
-            width: 100px;
-        }
-        .team-input input:focus {
-            border-color: #3498db;
-            outline: none;
-        }
-        .start-button {
-            background: #27ae60;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        .start-button:hover {
-            background: #2ecc71;
-        }
-        .start-button:disabled {
-            background: #7f8c8d;
-            cursor: not-allowed;
-        }
-        #game-ui {
-            margin-top: 10px;
-            display: flex;
-            width : 100%;
-        }
-        .game-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-direction: column;
-            margin-top: 10px;
-            margin-right: 10px;
-        }
-        .game-button {
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .game-controls {
-            flex-grow: 0;
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        .game-control-description{
-            padding: 10px;
-        }
-        .replay-button {
-            background: #3498db;
-            color: white;
-        }
-        .replay-button:hover {
-            background: #2980b9;
-        }
-        .setup-button {
-            background: #95a5a6;
-            color: white;
-        }
-        .setup-button:hover {
-            background: #7f8c8d;
+        #game-ui.hidden {
+            display: none !important;
         }
     </style>
 </head>
 <body>
-    
-    
-    <div id="setup-screen" class="setup-screen">
-        <h2>Battle Setup</h2>
-        <p>Enter team numbers for the royal banners:</p>
-        
-        <div class="team-setup">
-            <div class="team-input">
-                <h3 class="team-blue">Blue Kingdom</h3>
-                <input type="number" id="blue-team-number" placeholder="1-999" min="1" max="999">
-                <small>Royal Banner Number</small>
+    <div class="container">
+        <div id="setup-screen" class="setup-screen">
+            <h2>Battle Setup</h2>
+            <p>Enter team numbers for the royal banners:</p>
+            
+            <div class="team-setup">
+                <div class="team-input">
+                    <h3 class="team-blue">Blue Kingdom</h3>
+                    <input type="number" id="blue-team-number" placeholder="1-999" min="1" max="999" inputmode="numeric">
+                    <small>Royal Banner Number</small>
+                </div>
+                <div class="team-input">
+                    <h3 class="team-red">Red Kingdom</h3>
+                    <input type="number" id="red-team-number" placeholder="1-999" min="1" max="999" inputmode="numeric">
+                    <small>Royal Banner Number</small>
+                </div>
             </div>
-            <div class="team-input">
-                <h3 class="team-red">Red Kingdom</h3>
-                <input type="number" id="red-team-number" placeholder="1-999" min="1" max="999">
-                <small>Royal Banner Number</small>
-            </div>
-        </div>
 
-         <div style="margin: 20px 0;">
+            <div style="margin: 20px 0;">
                 <label style="display: flex; align-items: center; gap: 10px; justify-content: center;">
                     <input type="checkbox" id="show-unit-info">
                     <span>Show Unit Info</span>
                 </label>
             </div>
-        
-        <button id="start-battle" class="start-button" onclick="startBattle()">Begin Battle!</button>
-        <p><small>Each kingdom's warriors fight for their story point estimates</small></p>
-    </div>
-
-    <div id="game-ui">
-        <div class="game-controls">
-            <div class="game-control-description">
-                <h1>Orc Battle Arena</h1>
-                <p>Watch the kingdoms battle!</p>
-                <p>Protect your king to claim victory!</p>
-            </div>
-            <div class="game-buttons">
-                <button id="replay-btn" class="game-button replay-button" onclick="replayBattle()">🔄 Replay Battle</button>
-                <button id="restart-btn" class="game-button setup-button" onclick="showSetup()">⚙️ New Setup</button>
-            </div>
+            
+            <button id="start-battle" class="start-button" onclick="startBattle()">Begin Battle!</button>
+            <p><small>Each kingdom's warriors fight for their story point estimates</small></p>
         </div>
-        <div id="game-container">
-            <div class="info">
-                <div class="team-status">
-                    <div class="team team-blue">
-                        <h3>Blue Kingdom <span id="blue-banner-display"></span></h3>
-                        <div id="blue-count">5 Warriors + King</div>
+
+        <div id="game-ui" class="hidden">
+            <div class="game-controls">
+            <div class="game-control-description desktop-only">
+            <h1>Orc Battle Arena</h1>
+            <p>Watch the kingdoms battle!</p>
+            <p>Protect your king to claim victory!</p>
+            </div>
+            <div class="game-buttons desktop-buttons">
+            <button id="replay-btn" class="game-button replay-button" onclick="replayBattle()">
+            <span class="button-icon">🔄</span> Replay Battle
+            </button>
+            <button id="restart-btn" class="game-button setup-button" onclick="showSetup()">
+            <span class="button-icon">⚙️</span> New Setup
+            </button>
+            </div>
+            </div>
+            <div class="game-container-wrapper">
+                <div id="game-container">
+                    <!-- Mobile floating buttons -->
+                    <div class="mobile-buttons">
+                        <button id="mobile-replay-btn" class="mobile-game-button mobile-replay-button" onclick="replayBattle()" title="Replay Battle">
+                            <span class="mobile-button-icon">🔄</span>
+                        </button>
+                        <button id="mobile-restart-btn" class="mobile-game-button mobile-setup-button" onclick="showSetup()" title="New Setup">
+                            <span class="mobile-button-icon">⚙️</span>
+                        </button>
                     </div>
-                    <div class="team team-red">
-                        <h3>Red Kingdom <span id="red-banner-display"></span></h3>
-                        <div id="red-count">5 Warriors + King</div>
+                    
+                    <div class="info">
+                        <div class="team-status">
+                            <div class="team team-blue">
+                                <h3>Blue Kingdom <span id="blue-banner-display"></span></h3>
+                                <div id="blue-count">5 Warriors + King</div>
+                            </div>
+                            <div class="team team-center">
+                                <div id="game-timer">Game Time: 0.0s</div>
+                                <div id="game-dimensions" style="font-size: 12px; color: #95a5a6; margin-top: 5px; display: none;">Dimensions: Loading...</div>
+                            </div>
+                            <div class="team team-red">
+                                <h3>Red Kingdom <span id="red-banner-display"></span></h3>
+                                <div id="red-count">5 Warriors + King</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div style="margin-top: 10px;">
-                    <div id="game-timer" style="font-size: 14px; color: #bdc3c7;">Game Time: 0.0s</div>
-                </div>
             </div>
         </div>
-        <div class="spacer">
-
-        </div>
-        
     </div>
 
+    <script>
+        // Detect input method for better accessibility
+        function addInputDetection() {
+            let isTabPressed = false;
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    isTabPressed = true;
+                    document.body.classList.remove('mouse-user');
+                }
+            });
+            
+            document.addEventListener('mousedown', function() {
+                if (isTabPressed) {
+                    document.body.classList.add('mouse-user');
+                }
+            });
+        }
+        
+        // Initialize input detection
+        addInputDetection();
+        
+        // Prevent double-tap zoom on iOS
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // Handle orientation change with better responsiveness
+        function handleOrientationChange() {
+            // Force a repaint to ensure proper layout calculation
+            if (window.game && window.game.scale) {
+                setTimeout(() => {
+                    window.game.scale.refresh();
+                }, 100);
+            }
+        }
+        
+        // Add orientation change listener
+        window.addEventListener('orientationchange', handleOrientationChange);
+        screen.orientation?.addEventListener('change', handleOrientationChange);
+        
+        // Improved form validation with better UX
+        function validateInput(input) {
+            const value = parseInt(input.value);
+            const isValid = value >= 1 && value <= 999;
+            
+            input.style.borderColor = isValid || !input.value ? '' : '#e74c3c';
+            
+            return isValid;
+        }
+        
+        // Add real-time validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => {
+                input.addEventListener('input', () => validateInput(input));
+                input.addEventListener('blur', () => validateInput(input));
+            });
+        });
+    </script>
+
+    <!-- Load mobile enhancements -->
+    <script src="mobile-enhancements.js"></script>
+    
     <!-- Load setup module (which handles initialization and imports) -->
     <script type="module" src="gamelogic/setup.js"></script>
 </body>

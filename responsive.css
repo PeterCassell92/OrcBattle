@@ -1,0 +1,736 @@
+/* Mobile-first responsive CSS for Orc Battle Arena */
+
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #2c3e50;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+    -webkit-text-size-adjust: 100%; /* Prevent zoom on iOS */
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 5px;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 812px) and (orientation: landscape) {
+    body {
+        padding: 0;
+    }
+    .container {
+        padding: 2px;
+    }
+}
+
+/* Game container */
+#game-container {
+    border: 2px solid #34495e;
+    border-radius: 8px;
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #2d5a27;
+    overflow: visible;
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Make game container responsive */
+@media (max-width: 840px) {
+    #game-container {
+        border-radius: 4px;
+        border-width: 1px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    #game-container {
+        border-radius: 2px;
+    }
+}
+
+/* Info panel */
+.info {
+    margin: 2px 6px;
+    text-align: center;
+    position: absolute;
+    top: -37px;
+    width: calc(100% - 12px);
+    z-index: 10;
+    font-size: large;
+    font-weight: 500;
+    border-radius: 4px;
+    padding: 8px 5px;
+}
+
+.team-status {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.team {
+    text-align: center;
+    flex: 1;
+}
+
+.team-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 auto;
+    min-width: 120px;
+}
+
+.team h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+#game-timer {
+    font-size: 14px;
+    color: #bdc3c7;
+    font-weight: 500;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .team h3 {
+        font-size: 1em;
+        margin: 0 0 3px 0;
+    }
+    
+    .team-center {
+        min-width: 100px;
+    }
+    
+    #game-timer {
+        font-size: 12px;
+    }
+}
+
+.team-blue { 
+    color: #3498db; 
+}
+
+.team-red { 
+    color: #e74c3c; 
+}
+
+/* Setup screen */
+.setup-screen {
+    background: #34495e;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 10px auto;
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 600px) {
+    .setup-screen {
+        padding: 15px;
+        margin: 5px auto;
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .setup-screen {
+        padding: 10px;
+        border-radius: 6px;
+    }
+}
+
+.team-setup {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 500px) {
+    .team-setup {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+}
+
+.team-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    min-width: 120px;
+}
+
+.team-input input {
+    padding: 10px;
+    font-size: 18px;
+    text-align: center;
+    border: 2px solid #7f8c8d;
+    border-radius: 5px;
+    background: #2c3e50;
+    color: white;
+    width: 100px;
+    max-width: 100%;
+    transition: border-color 0.3s ease;
+}
+
+@media (max-width: 600px) {
+    .team-input input {
+        font-size: 16px;
+        padding: 8px;
+    }
+}
+
+.team-input input:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Buttons */
+.start-button {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    min-height: 48px; /* Touch-friendly */
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .start-button {
+        padding: 12px 24px;
+        font-size: 16px;
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+.start-button:hover:not(:disabled) {
+    background: #2ecc71;
+    transform: translateY(-1px);
+}
+
+.start-button:active {
+    transform: translateY(0);
+}
+
+.start-button:disabled {
+    background: #7f8c8d;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Game UI layout */
+#game-ui {
+    margin-top: 10px;
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    margin: 10px auto 0;
+    gap: 10px;
+}
+
+/* Mobile layout adjustments */
+@media (max-width: 900px) {
+    #game-ui {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 812px) and (orientation: landscape) {
+    #game-ui {
+        flex-direction: row;
+        margin-top: 5px;
+        gap: 5px;
+    }
+}
+
+.game-controls {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+@media (max-width: 900px) {
+    .game-controls {
+        order: 2;
+        min-width: unset;
+        width: 100%;
+    }
+}
+
+@media (max-width: 812px) and (orientation: landscape) {
+    .game-controls {
+        order: 1;
+        flex: 0 0 180px;
+        min-width: 180px;
+    }
+}
+
+.game-container-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+@media (max-width: 900px) {
+    .game-container-wrapper {
+        order: 1;
+        width: 100%;
+    }
+}
+
+@media (max-width: 812px) and (orientation: landscape) {
+    .game-container-wrapper {
+        order: 2;
+        flex: 1;
+    }
+}
+
+.game-control-description {
+    padding: 10px;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .game-control-description {
+        padding: 5px;
+    }
+    
+    .game-control-description h1 {
+        font-size: 1.5em;
+        margin: 0.5em 0;
+    }
+    
+    .game-control-description p {
+        margin: 0.3em 0;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 812px) and (orientation: landscape) {
+    .game-control-description {
+        padding: 5px;
+    }
+    
+    .game-control-description h1 {
+        font-size: 1.2em;
+        margin: 0.3em 0;
+    }
+    
+    .game-control-description p {
+        margin: 0.2em 0;
+        font-size: 0.8em;
+    }
+}
+
+.game-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 10px;
+    padding: 0 10px;
+}
+
+@media (max-width: 900px) {
+    .game-buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 812px) and (orientation: landscape) {
+    .game-buttons {
+        flex-direction: column;
+        margin-top: 5px;
+        gap: 5px;
+    }
+}
+
+.game-button {
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 48px; /* Touch-friendly */
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+@media (max-width: 900px) {
+    .game-button {
+        flex: 1;
+        min-width: 140px;
+        margin: 5px;
+    }
+}
+
+@media (max-width: 812px) and (orientation: landscape) {
+    .game-button {
+        padding: 8px 16px;
+        font-size: 14px;
+        min-height: 40px;
+        margin: 0;
+    }
+}
+
+.game-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.game-button:active {
+    transform: translateY(0);
+}
+
+.replay-button {
+    background: #3498db;
+    color: white;
+}
+
+.replay-button:hover {
+    background: #2980b9;
+}
+
+.setup-button {
+    background: #95a5a6;
+    color: white;
+}
+
+.setup-button:hover {
+    background: #7f8c8d;
+}
+
+.spacer {
+    flex: 0;
+}
+
+/* Landscape-specific optimizations for small screens */
+@media (max-width: 812px) and (orientation: landscape) and (max-height: 500px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .container {
+        padding: 1px;
+    }
+    
+    #game-ui {
+        margin-top: 2px;
+    }
+    
+    .info {
+        top: -35px;
+        font-size: 11px;
+    }
+    
+    .team h3 {
+        font-size: 0.9em;
+        margin: 0 0 2px 0;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+    .team-setup {
+        gap: 15px;
+    }
+    
+    .setup-screen {
+        padding: 10px;
+    }
+    
+    .game-control-description h1 {
+        font-size: 1.3em;
+    }
+}
+
+/* Prevent horizontal overflow */
+body, html {
+    overflow-x: hidden;
+}
+
+/* Ensure touch targets are accessible */
+button, input {
+    min-height: 44px;
+}
+
+@media (max-width: 812px) and (orientation: landscape) {
+    button, input {
+        min-height: 40px;
+    }
+}
+
+/* Loading and transition states */
+.game-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Improve focus visibility for accessibility */
+button:focus,
+input:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* Hide outline on mouse users, show on keyboard users */
+.mouse-user button:focus,
+.mouse-user input:focus {
+    outline: none;
+}
+
+/* Custom checkbox styling */
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #3498db;
+}
+
+/* Input validation states */
+input.invalid {
+    border-color: #e74c3c !important;
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2) !important;
+}
+
+/* Viewport height handling for mobile */
+:root {
+    --vh: 1vh;
+}
+
+body {
+    min-height: calc(var(--vh, 1vh) * 100);
+}
+
+/* Touch feedback */
+@media (hover: none) and (pointer: coarse) {
+    button:active {
+        transform: scale(0.98);
+        transition: transform 0.1s;
+    }
+    
+    .game-button:active {
+        transform: scale(0.98) !important;
+    }
+    
+    .start-button:active {
+        transform: scale(0.98) !important;
+    }
+}
+
+/* Keep critical inline styles for performance */
+#setup-screen.hidden {
+    display: none !important;
+}
+
+#game-ui.hidden {
+    display: none !important;
+}
+
+/* Button icons */
+.button-icon {
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 0.9em;
+}
+
+/* Responsive text scaling */
+@media (max-width: 480px) {
+    .button-icon {
+        margin-right: 3px;
+        font-size: 0.8em;
+    }
+    
+    body {
+        font-size: 14px;
+    }
+}
+
+/* Desktop/Mobile visibility controls */
+.desktop-only {
+    display: block;
+}
+
+.mobile-buttons {
+    display: none;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 900px) {
+    .desktop-only {
+        display: none;
+    }
+    
+    .desktop-buttons {
+        display: none;
+    }
+    
+    .game-controls {
+        display: none;
+    }
+    
+    .mobile-buttons {
+        display: flex;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        z-index: 20;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .mobile-game-button {
+        width: 44px;
+        height: 44px;
+        border: none;
+        border-radius: 22px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        backdrop-filter: blur(4px);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .mobile-replay-button {
+        background: rgba(52, 152, 219, 0.9);
+        color: white;
+    }
+    
+    .mobile-replay-button:hover {
+        background: rgba(41, 128, 185, 0.95);
+        transform: scale(1.05);
+    }
+    
+    .mobile-setup-button {
+        background: rgba(149, 165, 166, 0.9);
+        color: white;
+    }
+    
+    .mobile-setup-button:hover {
+        background: rgba(127, 140, 141, 0.95);
+        transform: scale(1.05);
+    }
+    
+    .mobile-button-icon {
+        font-size: 16px;
+        line-height: 1;
+    }
+    
+    /* Touch feedback for mobile buttons */
+    .mobile-game-button:active {
+        transform: scale(0.95);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    }
+    
+    /* Ensure mobile buttons stay visible on all mobile screen sizes */
+    @media (max-width: 480px) {
+        .mobile-buttons {
+            bottom: 8px;
+            right: 8px;
+            gap: 6px;
+        }
+        
+        .mobile-game-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+        }
+        
+        .mobile-button-icon {
+            font-size: 14px;
+        }
+    }
+    
+    /* Landscape mobile optimizations */
+    @media (max-width: 812px) and (orientation: landscape) {
+        .mobile-buttons {
+            bottom: 6px;
+            right: 6px;
+            gap: 4px;
+        }
+        
+        .mobile-game-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+        }
+        
+        .mobile-button-icon {
+            font-size: 12px;
+        }
+    }
+}
+
+@media (max-width: 320px) {
+    body {
+        font-size: 13px;
+    }
+    
+    .container {
+        padding: 2px;
+    }
+    
+    .setup-screen {
+        padding: 8px;
+    }
+    
+    .team-input input {
+        width: 80px;
+        font-size: 14px;
+    }
+}

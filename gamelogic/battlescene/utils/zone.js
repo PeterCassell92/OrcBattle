@@ -1,16 +1,25 @@
 export function applyZoneMethods(SceneClass) {
   SceneClass.prototype.isLocationInEnemyAlcovesOrOOB = function (targetX, targetY, enemyTeam) {
-    // Check if target is off-screen
-    if (targetX < 50 || targetX > 750 || targetY < 50 || targetY > 550) {
+    // Use actual scene dimensions
+    const sceneWidth = this.scale.width;
+    const sceneHeight = this.scale.height;
+    
+    // Check if target is off-screen (with proportional margins)
+    const margin = Math.min(sceneWidth, sceneHeight) * 0.0625; // 50px at 800px width
+    if (targetX < margin || targetX > sceneWidth - margin || targetY < margin || targetY > sceneHeight - margin) {
       return true;
     }
 
-    // Define alcove boundaries
+    // Define alcove boundaries (proportional to screen size)
+    const alcoveWidth = sceneWidth * 0.075; // 60px at 800px width
+    const alcoveHeight = sceneHeight * 0.333; // 200px at 600px height
+    const alcoveY = (sceneHeight - alcoveHeight) / 2; // Center vertically
+    
     const blueAlcoveBounds = {
-      x: 0, y: 200, width: 60, height: 200,
+      x: 0, y: alcoveY, width: alcoveWidth, height: alcoveHeight,
     };
     const redAlcoveBounds = {
-      x: 740, y: 200, width: 60, height: 200,
+      x: sceneWidth - alcoveWidth, y: alcoveY, width: alcoveWidth, height: alcoveHeight,
     };
 
     // Check if target is inside enemy alcove
@@ -38,9 +47,13 @@ export function applyZoneMethods(SceneClass) {
   };
 
   SceneClass.prototype.findNearestShrubToAlcove = function (alcoveTeam) {
-    // Get alcove position
-    const alcoveX = alcoveTeam === 'blue' ? 30 : 770;
-    const alcoveY = 300;
+    // Use actual scene dimensions for alcove positioning
+    const sceneWidth = this.scale.width;
+    const sceneHeight = this.scale.height;
+    
+    // Get alcove position (proportional to screen size)
+    const alcoveX = alcoveTeam === 'blue' ? sceneWidth * 0.0375 : sceneWidth * 0.9625; // 30px and 770px at 800px width
+    const alcoveY = sceneHeight * 0.5; // Center vertically
 
     // Find all unburnt shrubs
     const availableShrubs = this.backgroundDecorations.filter(
@@ -68,12 +81,16 @@ export function applyZoneMethods(SceneClass) {
   };
 
   SceneClass.prototype.isValidTerrainPosition = function (x, y) {
-    // Define safe zones (avoid spawning terrain here)
+    // Use actual scene dimensions
+    const sceneWidth = this.scale.width;
+    const sceneHeight = this.scale.height;
+    
+    // Define safe zones (avoid spawning terrain here) - proportional to screen size
     const safeZones = [
-      { x: 30, y: 300, radius: 80 }, // Blue king alcove
-      { x: 770, y: 300, radius: 80 }, // Red king alcove
-      { x: 150, y: 300, radius: 60 }, // Blue spawn area
-      { x: 650, y: 300, radius: 60 }, // Red spawn area
+      { x: sceneWidth * 0.0375, y: sceneHeight * 0.5, radius: sceneWidth * 0.1 }, // Blue king alcove
+      { x: sceneWidth * 0.9625, y: sceneHeight * 0.5, radius: sceneWidth * 0.1 }, // Red king alcove
+      { x: sceneWidth * 0.1875, y: sceneHeight * 0.5, radius: sceneWidth * 0.075 }, // Blue spawn area
+      { x: sceneWidth * 0.8125, y: sceneHeight * 0.5, radius: sceneWidth * 0.075 }, // Red spawn area
     ];
 
     // Check if position is in a safe zone

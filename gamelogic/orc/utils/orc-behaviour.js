@@ -569,10 +569,10 @@ export const OrcBehaviour = {
     if (closestBlockingTerrain && closestDistance < 70) {
       orc.destroyTerrainChunk(closestBlockingTerrain);
 
-      const chanceOfMiniHeal = 0.4;
+      const chanceOfMiniHeal = 0.2;
 
       if (Math.random() <= chanceOfMiniHeal) {
-        orc.health += 0.5;
+        orc.health += 0.4;
       }
 
       // Reset frustration timer by updating lastFireTime (berserker feels better after destroying something)

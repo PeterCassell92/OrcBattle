@@ -36,15 +36,15 @@ export function applyBerserkerFeatures(OrcClass) {
     if (this.head) this.head.clearTint();
 
     // Set berserker stats
-    this.health = 4 + (this.berserkerStrengthBonus / 2 || 0); // Berserkers have 6 health + bonus
+    this.health = 3.5 + (this.berserkerStrengthBonus / 3 || 0);
 
     this.maxLaserResistance = 0.95;
     this.minLaserResistance = 0.25;
     this.laserResistance = 0.6 + 0.1 * (this.berserkerStrengthBonus || 0); // 50% chance to resist + 10% per bonus
     this.deflectionsCount = 0; // Track total deflections
     this.deflectionsThisDecay = 0; // Track deflections since last decay
-    this.resistanceDecayRate = 3.5 * this.berserkerStrengthBonus; // how many shots deflected it takes to lose the decay amount
-    this.resistanceDecayAmount = 0.175 - (1.8 * this.berserkerStrengthBonus) / 100; // Lose 0.1 (10%) resistance per decay
+    this.resistanceDecayRate = 0.5 + 2.5 * this.berserkerStrengthBonus; //shots deflected to lose the decay amount
+    this.resistanceDecayAmount = 0.175 - ((1.8 * this.berserkerStrengthBonus) / 100); //Lose resistance in chunks
     this.canUseLaser = false; // Cannot use laser attacks
     this.hasSwordAttack = true; // Must use sword attacks
     this.hasAxeAttack = true; // Can destroy terrain with axe

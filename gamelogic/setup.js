@@ -7,8 +7,8 @@ export const userSettings = {
 };
 
 export function showSetup() {
-  document.getElementById('setup-screen').style.display = 'block';
-  document.getElementById('game-ui').style.display = 'none';
+  document.getElementById('setup-screen').classList.remove('hidden');
+  document.getElementById('game-ui').classList.add('hidden');
   if (window.game) {
     window.game.destroy(true);
     window.game = null;
@@ -33,8 +33,8 @@ export function startBattle() {
   document.getElementById('blue-banner-display').textContent = `(${blueNumber})`;
   document.getElementById('red-banner-display').textContent = `(${redNumber})`;
 
-  document.getElementById('setup-screen').style.display = 'none';
-  document.getElementById('game-ui').style.display = 'flex';
+  document.getElementById('setup-screen').classList.add('hidden');
+  document.getElementById('game-ui').classList.remove('hidden');
 
   // Import and start the game dynamically
   import('./battlescene/index.js').then(({ startGame }) => {
@@ -94,6 +94,14 @@ export function updateGameTimer() {
   if (window.game && window.game.scene.scenes[0] && window.game.scene.scenes[0].gameStartTime) {
     const scene = window.game.scene.scenes[0];
 
+    // Update game dimensions display
+    const dimensionsElement = document.getElementById('game-dimensions');
+    if (dimensionsElement && window.game.scale) {
+      const width = window.game.scale.width;
+      const height = window.game.scale.height;
+      dimensionsElement.textContent = `Dimensions: ${width}×${height}px`;
+    }
+
     // Stop timer if game is over
     if (scene.gameOver && scene.gameEndTime) {
       const finalTime = (scene.gameEndTime - scene.gameStartTime) / 1000;
@@ -108,6 +116,14 @@ export function updateGameTimer() {
     const timerElement = document.getElementById('game-timer');
     if (timerElement) {
       timerElement.textContent = `Game Time: ${gameTime.toFixed(1)}s`;
+    }
+  } else {
+    // Update dimensions even when game isn't running
+    const dimensionsElement = document.getElementById('game-dimensions');
+    if (dimensionsElement && window.game && window.game.scale) {
+      const width = window.game.scale.width;
+      const height = window.game.scale.height;
+      dimensionsElement.textContent = `Dimensions: ${width}×${height}px`;
     }
   }
 }

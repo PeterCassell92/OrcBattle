@@ -168,46 +168,61 @@ export function applyTerrainGenerationMethods(SceneClass) {
   };
 
   SceneClass.prototype.createKingsAndAlcoves = function () {
+    // Use actual scene dimensions
+    const sceneWidth = this.scale.width;
+    const sceneHeight = this.scale.height;
+    
+    // Calculate proportional positions
+    const alcoveWidth = sceneWidth * 0.075; // 60px at 800px width
+    const alcoveHeight = sceneHeight * 0.333; // 200px at 600px height
+    const alcoveY = sceneHeight * 0.5; // Center vertically
+    
+    const blueAlcoveX = sceneWidth * 0.0375; // 30px at 800px width
+    const redAlcoveX = sceneWidth * 0.9625; // 770px at 800px width
+    
+    console.log(`Creating alcoves at scene size ${sceneWidth}x${sceneHeight}`);
+    console.log(`Blue alcove: ${blueAlcoveX}, Red alcove: ${redAlcoveX}`);
+    
     // Create blue alcove (left side)
-    const blueAlcove = this.add.rectangle(30, 300, 60, 200, 0x2c3e50);
+    const blueAlcove = this.add.rectangle(blueAlcoveX, alcoveY, alcoveWidth, alcoveHeight, 0x2c3e50);
     blueAlcove.setStrokeStyle(2, 0x3498db);
 
     // Create physics-enabled blue alcove walls for laser collision
     this.blueAlcoveWalls = this.physics.add.staticGroup();
-    const blueWallLeft = this.physics.add.staticSprite(0, 300, null);
-    blueWallLeft.body.setSize(4, 200);
+    const blueWallLeft = this.physics.add.staticSprite(blueAlcoveX - alcoveWidth/2, alcoveY, null);
+    blueWallLeft.body.setSize(4, alcoveHeight);
     blueWallLeft.setVisible(false);
     blueWallLeft.alcoveTeam = 'blue';
     this.blueAlcoveWalls.add(blueWallLeft);
 
-    const blueWallRight = this.physics.add.staticSprite(60, 300, null);
-    blueWallRight.body.setSize(4, 200);
+    const blueWallRight = this.physics.add.staticSprite(blueAlcoveX + alcoveWidth/2, alcoveY, null);
+    blueWallRight.body.setSize(4, alcoveHeight);
     blueWallRight.setVisible(false);
     blueWallRight.alcoveTeam = 'blue';
     this.blueAlcoveWalls.add(blueWallRight);
 
-    const blueWallTop = this.physics.add.staticSprite(30, 200, null);
-    blueWallTop.body.setSize(60, 4);
+    const blueWallTop = this.physics.add.staticSprite(blueAlcoveX, alcoveY - alcoveHeight/2, null);
+    blueWallTop.body.setSize(alcoveWidth, 4);
     blueWallTop.setVisible(false);
     blueWallTop.alcoveTeam = 'blue';
     this.blueAlcoveWalls.add(blueWallTop);
 
-    const blueWallBottom = this.physics.add.staticSprite(30, 400, null);
-    blueWallBottom.body.setSize(60, 4);
+    const blueWallBottom = this.physics.add.staticSprite(blueAlcoveX, alcoveY + alcoveHeight/2, null);
+    blueWallBottom.body.setSize(alcoveWidth, 4);
     blueWallBottom.setVisible(false);
     blueWallBottom.alcoveTeam = 'blue';
     this.blueAlcoveWalls.add(blueWallBottom);
 
     // Create blue king using King class
-    this.blueKing = this.createKing(30, 280, 'blue');
+    this.blueKing = this.createKing(blueAlcoveX, alcoveY - 20, 'blue');
 
     // Create blue flag with team number (moved to top of alcove)
-    this.blueFlag = this.add.sprite(30, 210, 'flag-blue');
+    this.blueFlag = this.add.sprite(blueAlcoveX, alcoveY - alcoveHeight/2 + 10, 'flag-blue');
     this.blueFlag.team = 'blue';
 
     // Add team number to flag (perfectly centered within flag banner)
     this.blueNumberText = this.add
-      .text(35.5, 210.5, userSettings.blueTeamNumber.toString(), {
+      .text(blueAlcoveX + 5.5, alcoveY - alcoveHeight/2 + 10.5, userSettings.blueTeamNumber.toString(), {
         fontSize: '16px',
         fill: '#ffffff',
         fontWeight: 'bold',
@@ -218,45 +233,45 @@ export function applyTerrainGenerationMethods(SceneClass) {
       .setOrigin(0.5);
 
     // Create red alcove (right side)
-    const redAlcove = this.add.rectangle(770, 300, 60, 200, 0x2c3e50);
+    const redAlcove = this.add.rectangle(redAlcoveX, alcoveY, alcoveWidth, alcoveHeight, 0x2c3e50);
     redAlcove.setStrokeStyle(2, 0xe74c3c);
 
     // Create physics-enabled red alcove walls for laser collision
     this.redAlcoveWalls = this.physics.add.staticGroup();
-    const redWallLeft = this.physics.add.staticSprite(740, 300, null);
-    redWallLeft.body.setSize(4, 200);
+    const redWallLeft = this.physics.add.staticSprite(redAlcoveX - alcoveWidth/2, alcoveY, null);
+    redWallLeft.body.setSize(4, alcoveHeight);
     redWallLeft.setVisible(false);
     redWallLeft.alcoveTeam = 'red';
     this.redAlcoveWalls.add(redWallLeft);
 
-    const redWallRight = this.physics.add.staticSprite(800, 300, null);
-    redWallRight.body.setSize(4, 200);
+    const redWallRight = this.physics.add.staticSprite(redAlcoveX + alcoveWidth/2, alcoveY, null);
+    redWallRight.body.setSize(4, alcoveHeight);
     redWallRight.setVisible(false);
     redWallRight.alcoveTeam = 'red';
     this.redAlcoveWalls.add(redWallRight);
 
-    const redWallTop = this.physics.add.staticSprite(770, 200, null);
-    redWallTop.body.setSize(60, 4);
+    const redWallTop = this.physics.add.staticSprite(redAlcoveX, alcoveY - alcoveHeight/2, null);
+    redWallTop.body.setSize(alcoveWidth, 4);
     redWallTop.setVisible(false);
     redWallTop.alcoveTeam = 'red';
     this.redAlcoveWalls.add(redWallTop);
 
-    const redWallBottom = this.physics.add.staticSprite(770, 400, null);
-    redWallBottom.body.setSize(60, 4);
+    const redWallBottom = this.physics.add.staticSprite(redAlcoveX, alcoveY + alcoveHeight/2, null);
+    redWallBottom.body.setSize(alcoveWidth, 4);
     redWallBottom.setVisible(false);
     redWallBottom.alcoveTeam = 'red';
     this.redAlcoveWalls.add(redWallBottom);
 
     // Create red king using King class
-    this.redKing = this.createKing(770, 280, 'red');
+    this.redKing = this.createKing(redAlcoveX, alcoveY - 20, 'red');
 
     // Create red flag with team number (moved to top of alcove)
-    this.redFlag = this.add.sprite(770, 210, 'flag-red');
+    this.redFlag = this.add.sprite(redAlcoveX, alcoveY - alcoveHeight/2 + 10, 'flag-red');
     this.redFlag.team = 'red';
 
     // Add team number to flag (perfectly centered within flag banner)
     this.redNumberText = this.add
-      .text(764.5, 210.5, userSettings.redTeamNumber.toString(), {
+      .text(redAlcoveX - 5.5, alcoveY - alcoveHeight/2 + 10.5, userSettings.redTeamNumber.toString(), {
         fontSize: '16px',
         fill: '#ffffff',
         fontWeight: 'bold',
