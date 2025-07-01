@@ -80,13 +80,23 @@ export function applyCollisionMethods(SceneClass) {
       duration: 100,
       yoyo: true,
       onComplete: () => {
+        if (orc.health < -10) {
+          console.log('Negative health detected!!!!');
+          console.log(`Is orc dying already? ${orc.isDying}`);
+        }
         orc.clearTint();
-        
+
         // Update health bar if orc is a berserker
-        if (orc.type === 'berserker' && orc.updateBerserkerHealthBar) {
+        if (orc.type === 'berserker') {
+          if (orc.health < 3) {
+            console.log(`Health: ${orc.health}`);
+            console.log(`immuneToDamage: ${orc.immuneToDamage}`);
+            console.log(`invulnerableWhileInvisible: ${orc.invulnerableWhileInvisible}`);
+          }
+
           orc.updateBerserkerHealthBar();
         }
-        
+
         if (orc.health <= 0) {
           // console.log(`${orc.team} orc died - health: ${orc.health}`);
           orc.attemptDie();

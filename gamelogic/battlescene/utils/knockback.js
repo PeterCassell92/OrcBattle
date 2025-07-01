@@ -11,7 +11,7 @@ export function applyKnockbackMethods(SceneClass) {
       const distance = Phaser.Math.Distance.Between(targetOrc.x, targetOrc.y, terrainX, terrainY);
 
       if (distance <= knockbackRange) {
-        console.log(`Knocking back ${targetOrc.team} orc from terrain destruction`);
+        //console.log(`Knocking back ${targetOrc.team} orc from terrain destruction`);
         this.applyOrcKnockback(targetOrc, terrainX, terrainY, distance);
       }
     });

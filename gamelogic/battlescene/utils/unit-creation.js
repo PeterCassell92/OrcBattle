@@ -7,13 +7,12 @@ export function applyUnitCreationMethods(SceneClass) {
     const orcsPerTeam = config.teamSize;
     this.blueOrcs = [];
     this.redOrcs = [];
-    
+
     // Use actual scene dimensions instead of config dimensions
     const sceneWidth = this.scale.width;
     const sceneHeight = this.scale.height;
-    
+
     console.log(`Creating teams with scene dimensions: ${sceneWidth}x${sceneHeight}`);
-    
     const blueXMin = 0;
     const blueXMax = sceneWidth / 2 - 32;
     const redXMin = sceneWidth / 2 + 32;

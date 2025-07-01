@@ -11,6 +11,7 @@ export function applyBerserkerFeatures(OrcClass) {
     // FIRST: Set the type to berserker (MOVED UP before invisibility cleanup)
     this.type = 'berserker';
 
+    this.berserkerCandidate = false;
     // THEN: Remove invisibility effects and restore visibility
     this.invisible = false;
     this.invulnerableWhileInvisible = false; // Remove invisibility invulnerability
@@ -44,8 +45,8 @@ export function applyBerserkerFeatures(OrcClass) {
     this.laserResistance = 0.6 + 0.1 * (this.berserkerStrengthBonus || 0); // 50% chance to resist + 10% per bonus
     this.deflectionsCount = 0; // Track total deflections
     this.deflectionsThisDecay = 0; // Track deflections since last decay
-    this.resistanceDecayRate = 2.5 + 2.6 * this.berserkerStrengthBonus; //shots deflected to lose the decay amount
-    this.resistanceDecayAmount = 0.175 - ((1.8 * this.berserkerStrengthBonus) / 100); //Lose resistance in chunks
+    this.resistanceDecayRate = 2.5 + 3 * this.berserkerStrengthBonus; //shots deflected to lose the decay amount
+    this.resistanceDecayAmount = 0.175 - ((2 * this.berserkerStrengthBonus) / 100); //Lose resistance in chunks
     this.canUseLaser = false; // Cannot use laser attacks
     this.hasSwordAttack = true; // Must use sword attacks
     this.hasAxeAttack = true; // Can destroy terrain with axe
@@ -87,9 +88,9 @@ export function applyBerserkerFeatures(OrcClass) {
     this.deflectionsCount++;
     this.deflectionsThisDecay++;
 
-    console.log(
-      `${this.team} berserker deflection #${this.deflectionsCount} (${this.deflectionsThisDecay}/${this.resistanceDecayRate} until resistance decay)`,
-    );
+    // console.log(
+    //   `${this.team} berserker deflection #${this.deflectionsCount} (${this.deflectionsThisDecay}/${this.resistanceDecayRate} until resistance decay)`,
+    // );
 
     // Check if it's time to decay resistance
     if (this.deflectionsThisDecay >= this.resistanceDecayRate) {
@@ -105,9 +106,9 @@ export function applyBerserkerFeatures(OrcClass) {
     const resistancePercent = (this.laserResistance * 100).toFixed(1);
     const lostPercent = (this.resistanceDecayAmount * 100).toFixed(1);
 
-    console.log(
-      `${this.team} berserker resistance degraded! Lost ${lostPercent}% resistance. Now at ${resistancePercent}%`,
-    );
+    // console.log(
+    //   `${this.team} berserker resistance degraded! Lost ${lostPercent}% resistance. Now at ${resistancePercent}%`,
+    // );
 
     // Visual feedback for resistance loss
     this.showResistanceLossEffect();

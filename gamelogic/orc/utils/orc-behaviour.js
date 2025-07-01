@@ -170,7 +170,7 @@ export const OrcBehaviour = {
       orc.bodyRotation = moveAngle;
       orc.setRotation(orc.bodyRotation);
 
-      console.log(`${orc.team} rusher evading to terrain cover`);
+      // console.log(`${orc.team} rusher evading to terrain cover`);
     } else {
       // No terrain available, perform random evasive maneuver
       const evasionAngle = Math.random() * Math.PI * 2;
@@ -574,7 +574,7 @@ export const OrcBehaviour = {
     if (closestBlockingTerrain && closestDistance < 70) {
       orc.destroyTerrainChunk(closestBlockingTerrain);
 
-      const chanceOfMiniHeal = 0.2;
+      const chanceOfMiniHeal = 0.5;
 
       if (Math.random() <= chanceOfMiniHeal) {
         orc.health += 0.4;

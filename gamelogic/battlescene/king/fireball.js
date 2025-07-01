@@ -177,7 +177,7 @@ export class Fireball extends Phaser.Physics.Arcade.Sprite {
       });
     }
 
-    console.log(`Fireball impact at (${x.toFixed(0)}, ${y.toFixed(0)})`);
+    //console.log(`Fireball impact at (${x.toFixed(0)}, ${y.toFixed(0)})`);
   }
 
   burnNearbyShrubs(impactX, impactY) {

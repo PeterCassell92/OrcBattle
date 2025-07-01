@@ -56,26 +56,26 @@ export function applyBattlefieldStateMethods(SceneClass) {
   };
 
   // Check if this orc is near world boundaries and apply boundary enforcement
-  SceneClass.prototype.enforceWorldBoundaries = function(orc) {
+  SceneClass.prototype.enforceWorldBoundaries = function (orc) {
     // Use actual scene dimensions instead of hardcoded values
     const sceneWidth = this.scale.width;
     const sceneHeight = this.scale.height;
-    
+
     const margin = 30; // Minimum distance from edge
     const pushForce = 50; // Strength of boundary push
-    
+
     let boundaryPushX = 0;
     let boundaryPushY = 0;
-    
+
     // Check left boundary
     if (orc.x < margin) {
       boundaryPushX = pushForce;
     }
-    // Check right boundary  
+    // Check right boundary
     else if (orc.x > sceneWidth - margin) {
       boundaryPushX = -pushForce;
     }
-    
+
     // Check top boundary
     if (orc.y < margin) {
       boundaryPushY = pushForce;
@@ -84,39 +84,39 @@ export function applyBattlefieldStateMethods(SceneClass) {
     else if (orc.y > sceneHeight - margin) {
       boundaryPushY = -pushForce;
     }
-    
+
     // Apply boundary correction if needed
     if (boundaryPushX !== 0 || boundaryPushY !== 0) {
       // Get current velocity
       const currentVelX = orc.body ? orc.body.velocity.x : 0;
       const currentVelY = orc.body ? orc.body.velocity.y : 0;
-      
+
       // Combine boundary push with reduced current velocity
       const newVelX = currentVelX * 0.3 + boundaryPushX;
       const newVelY = currentVelY * 0.3 + boundaryPushY;
-      
+
       orc.setVelocity(newVelX, newVelY);
-      
-      console.log(`Enforcing boundaries for ${orc.team} orc at (${orc.x.toFixed(1)}, ${orc.y.toFixed(1)}) - push: (${boundaryPushX}, ${boundaryPushY})`);
+
+      //console.log(`Enforcing boundaries for ${orc.team} orc at (${orc.x.toFixed(1)}, ${orc.y.toFixed(1)}) - push: (${boundaryPushX}, ${boundaryPushY})`);
       return true; // Boundary enforcement applied
     }
-    
+
     return false; // No boundary enforcement needed
   };
-  
+
   // Enhanced position validation and correction
-  SceneClass.prototype.validateOrcPosition = function(orc) {
+  SceneClass.prototype.validateOrcPosition = function (orc) {
     // Use actual scene dimensions
     const sceneWidth = this.scale.width;
     const sceneHeight = this.scale.height;
-    
+
     const minX = 25;
     const maxX = sceneWidth - 25;
-    const minY = 25; 
+    const minY = 25;
     const maxY = sceneHeight - 25;
-    
+
     let corrected = false;
-    
+
     // Hard boundaries - teleport orc back if somehow outside
     if (orc.x < minX) {
       orc.x = minX;
@@ -127,7 +127,7 @@ export function applyBattlefieldStateMethods(SceneClass) {
       orc.setVelocity(-Math.abs(orc.body?.velocity.x || 0), orc.body?.velocity.y || 0);
       corrected = true;
     }
-    
+
     if (orc.y < minY) {
       orc.y = minY;
       orc.setVelocity(orc.body?.velocity.x || 0, Math.abs(orc.body?.velocity.y || 0));
@@ -137,13 +137,13 @@ export function applyBattlefieldStateMethods(SceneClass) {
       orc.setVelocity(orc.body?.velocity.x || 0, -Math.abs(orc.body?.velocity.y || 0));
       corrected = true;
     }
-    
+
     if (corrected) {
       console.log(`Position corrected for ${orc.team} orc - new position: (${orc.x.toFixed(1)}, ${orc.y.toFixed(1)})`);
       // Update sprite positions after correction
       orc.syncSprites();
     }
-    
+
     return corrected;
   };
 

@@ -134,8 +134,8 @@ export function applyBerserkerPhaseMethods(SceneClass) {
 
     // Mark orcs as berserker candidates
     orcs.forEach((orc) => {
-      orc.berserkerCandidate = true;
-      orc.immuneToDamage = true;
+      // orc.berserkerCandidate = true;
+      // orc.immuneToDamage = true;
       orc.berserkerStrengthBonus = strengthBonus;
 
       console.log(`Making ${orc.team} orc immune - health: ${orc.health}`);
@@ -278,7 +278,7 @@ export function applyBerserkerPhaseMethods(SceneClass) {
 
           // Cancel any ongoing death animations/tweens
           this.tweens.killTweensOf(orc);
-
+          orc.isDying = false;
           // Restore appearance if death animation started
           orc.setAlpha(1);
           orc.setScale(1);

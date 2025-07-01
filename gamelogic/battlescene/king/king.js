@@ -404,7 +404,7 @@ export class King extends Phaser.Physics.Arcade.Sprite {
       }
     });
 
-    console.log(`Found nearest shrub to ${alcoveTeam} alcove at distance ${nearestDistance.toFixed(0)}`);
+    // console.log(`Found nearest shrub to ${alcoveTeam} alcove at distance ${nearestDistance.toFixed(0)}`);
     return nearestShrub;
   }
 
@@ -413,7 +413,7 @@ export class King extends Phaser.Physics.Arcade.Sprite {
     const enemyKing = this.team === 'blue' ? this.scene.redKing : this.scene.blueKing;
 
     if (!enemyKing || !enemyKing.alive) {
-      console.log(`${this.team} king has no target for fireball`);
+      // console.log(`${this.team} king has no target for fireball`);
       return;
     }
 
@@ -424,7 +424,7 @@ export class King extends Phaser.Physics.Arcade.Sprite {
 
     // Validate target position - check if it's in enemy alcove or off-screen
     if (this.isFireballTargetInvalid(targetX, targetY, enemyKing.team)) {
-      console.log(`${this.team} king's fireball target is invalid, finding nearest shrub to enemy alcove`);
+      // console.log(`${this.team} king's fireball target is invalid, finding nearest shrub to enemy alcove`);
 
       // Find alternative target nearest shrub to enemy alcove
       const nearestShrub = this.scene.findNearestShrubToAlcove(enemyKing.team);
@@ -433,17 +433,17 @@ export class King extends Phaser.Physics.Arcade.Sprite {
         // Target the nearest shrub with some randomness
         targetX = nearestShrub.x + (Math.random() - 0.5) * 30; // Small offset for variety
         targetY = nearestShrub.y + (Math.random() - 0.5) * 30;
-        console.log(
-          `${this.team} king retargeting fireball to shrub at (${targetX.toFixed(0)}, ${targetY.toFixed(0)})`,
-        );
+        // console.log(
+        //   `${this.team} king retargeting fireball to shrub at (${targetX.toFixed(0)}, ${targetY.toFixed(0)})`,
+        // );
       } else {
         // Fallback: target area in front of enemy alcove
         const safeTarget = this.findFireballTargetNearAlcove(enemyKing.team);
         targetX = safeTarget.x;
         targetY = safeTarget.y;
-        console.log(
-          `${this.team} king using fallback target at (${targetX.toFixed(0)}, ${targetY.toFixed(0)})`,
-        );
+        // console.log(
+        //   `${this.team} king using fallback target at (${targetX.toFixed(0)}, ${targetY.toFixed(0)})`,
+        // );
       }
     }
 
@@ -464,7 +464,7 @@ export class King extends Phaser.Physics.Arcade.Sprite {
     const fireball = new Fireball(this.scene, this.x, this.y - 20);
     fireball.fireAt(targetX, targetY);
 
-    console.log(`${this.team} king launches fireball toward ${enemyKing.team} king area!`);
+    // console.log(`${this.team} king launches fireball toward ${enemyKing.team} king area!`);
   }
 
   //Kings know the target location of incoming fireball and get away
@@ -472,7 +472,7 @@ export class King extends Phaser.Physics.Arcade.Sprite {
     // Only dodge if king is marching and alive
     if (!this.marching || !this.alive || this.dodging) return;
 
-    console.log(`${this.team} king detects incoming fireball and prepares to dodge!`);
+    // console.log(`${this.team} king detects incoming fireball and prepares to dodge!`);
 
     // Calculate dodge direction (away from fireball target)
     const dodgeAngle = Phaser.Math.Angle.Between(fireballTargetX, fireballTargetY, this.x, this.y);
@@ -504,7 +504,7 @@ export class King extends Phaser.Physics.Arcade.Sprite {
     this.dodgeStartTime = Date.now();
     this.marchSpeed = this.dodgeSpeed; // Speed boost
 
-    console.log(`${this.team} king dodging to (${dodgeX.toFixed(0)}, ${dodgeY.toFixed(0)}) with speed boost!`);
+    // console.log(`${this.team} king dodging to (${dodgeX.toFixed(0)}, ${dodgeY.toFixed(0)}) with speed boost!`);
   }
 
   setMarchWaypoints() {
@@ -523,7 +523,7 @@ export class King extends Phaser.Physics.Arcade.Sprite {
       ? Math.min(650, centerX - safetyBuffer) // Blue king stops before center
       : Math.max(150, centerX + safetyBuffer); // Red king stops before center
 
-    console.log(`${this.team} king march boundaries: start=${startX}, end=${endX}, center=${centerX}`);
+    // console.log(`${this.team} king march boundaries: start=${startX}, end=${endX}, center=${centerX}`);
 
     // Create waypoints in alternating combat strips
     const totalDistance = Math.abs(endX - startX);
@@ -568,10 +568,10 @@ export class King extends Phaser.Physics.Arcade.Sprite {
     this.waypointIndex = 0;
     this.currentWaypoint = this.marchWaypoints[0];
 
-    console.log(`${this.team} king march waypoints created: ${this.marchWaypoints.length} waypoints`);
-    console.log(
-      `${this.team} king final waypoint at x=${this.marchWaypoints[this.marchWaypoints.length - 1]?.x || 'none'}`,
-    );
+    // console.log(`${this.team} king march waypoints created: ${this.marchWaypoints.length} waypoints`);
+    // console.log(
+    //   `${this.team} king final waypoint at x=${this.marchWaypoints[this.marchWaypoints.length - 1]?.x || 'none'}`,
+    // );
   }
 
   updateKingMarch(time) {
@@ -629,12 +629,12 @@ export class King extends Phaser.Physics.Arcade.Sprite {
         this.marching = false;
         this.currentWaypoint = null;
         this.setVelocity(0, 0); // Stop movement
-        console.log(`${this.team} king completed march and holds position`);
+        // console.log(`${this.team} king completed march and holds position`);
         return;
       }
 
       this.currentWaypoint = this.marchWaypoints[this.waypointIndex];
-      console.log(`${this.team} king moving to waypoint ${this.waypointIndex}`);
+      // console.log(`${this.team} king moving to waypoint ${this.waypointIndex}`);
     }
 
     // Calculate movement toward waypoint
