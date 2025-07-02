@@ -123,6 +123,37 @@ Open `Orcs.html` in a browser or use a local server.
 - Run 'start-server.sh' with command: ./start_server.sh
 - Go to 'http://localhost:8000/Orcs.html' in browser
 
+## Production Build 🏢
+
+### Prerequisites for Building
+```bash
+# Install build dependencies
+npm install rollup archiver --save-dev
+```
+
+### Creating Production Build
+```bash
+# Build production-ready bundle
+npm run build:prod
+```
+
+### Build Output
+The build script creates:
+- `deployment/dist/` - Ready-to-deploy files
+- `deployment/dist/orc_build.zip` - Deployment package
+
+### Build Features
+- ⚙️ **Rollup bundling** - All modules crushed into single `main.js`
+- 📦 **ZIP packaging** - Ready for deployment
+- 🧼 **Asset copying** - All images and resources included
+- 🔧 **Config updates** - Web.config updated for production
+- 🗜️ **Clean builds** - Purges old builds automatically
+
+### Deployment
+1. Run `npm run build:prod`
+2. Extract `orc_build.zip` to your web server
+3. Ensure server serves `index.html` as default document
+
 
 ## Contributing 🤝
 This project is designed for **team collaboration** with developers of varying experience levels. The modular structure and linting setup help maintain code quality while teaching good JavaScript practices.

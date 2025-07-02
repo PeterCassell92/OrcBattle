@@ -7,6 +7,7 @@
     "lint:fix": "eslint gamelogic/**/*.js --fix",
     "format": "prettier --write gamelogic/**/*.js",
     "format:check": "prettier --check gamelogic/**/*.js",
+    "build:prod": "node deployment/make_dist.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,6 +18,10 @@
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.32.0",
-    "phaser": "^3.90.0"
+    "phaser": "^3.90.0",
+    "rollup": "^4.44.1"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1"
   }
 }
