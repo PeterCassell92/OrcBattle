@@ -1,3 +1,5 @@
+import { LaserGun } from '../../weapons/laser-gun.js';
+
 export function applyBerserkerFeatures(OrcClass) {
   OrcClass.prototype.convertToBerserker = function () {
     console.log(`Converting ${this.team} orc to BERSERKER!`);
@@ -10,6 +12,9 @@ export function applyBerserkerFeatures(OrcClass) {
 
     // FIRST: Set the type to berserker (MOVED UP before invisibility cleanup)
     this.type = 'berserker';
+
+    // UNEQUIP WEAPON
+    this.unequip();
 
     this.berserkerCandidate = false;
     // THEN: Remove invisibility effects and restore visibility
@@ -597,6 +602,13 @@ export function applyBerserkerFeatures(OrcClass) {
     this.collisionsDisabled = false; // Reset collision flag
     this.lineOfSightLostTime = null; // Clear line of sight timer
     this.seekingLineOfSightStartTime = null; // Clear terrain destruction timer
+
+    // RE-EQUIP APPROPRIATE WEAPON
+    if (this.behaviour === 'cover_firer') {
+      this.equip(LaserGun.createHeavyLaser());
+    } else {
+      this.equip(LaserGun.createStandardLaser());
+    }
 
     console.log(`Cleaned up all berserker effects for ${this.team} orc`);
   };

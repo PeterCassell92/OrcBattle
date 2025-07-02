@@ -1,6 +1,7 @@
 import { userSettings } from '../../setup.js';
 import { SpeechBubble } from '../../dialogUI/speechbubble.js';
 import { SpriteGenerator } from '../../sprites/spriteGenerator.js';
+import { LaserGun } from '../../weapons/laser-gun.js';
 
 export class Orc extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, team, behaviour = 'rusher') {
@@ -81,6 +82,13 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 
     // Generate individual aim variance for this orc
     this.generateAimVariance();
+
+    // EQUIP APPROPRIATE WEAPON
+    if (behaviour === 'cover_firer') {
+      this.equip(LaserGun.createHeavyLaser());
+    } else {
+      this.equip(LaserGun.createStandardLaser());
+    }
 
     // Initialize collision state
     this.collisionsDisabled = false;
@@ -165,6 +173,34 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
         duration: 1000,
         onComplete: () => particle.destroy(),
       });
+    }
+  }
+
+  // WEAPON MANAGEMENT METHODS
+  equip(weapon) {
+    this.weapon = weapon;
+    if (weapon) {
+      console.log(`${this.team} orc equipped with ${weapon.getWeaponInfo().type}`);
+    }
+  }
+
+  unequip() {
+    if (this.weapon) {
+      console.log(`${this.team} orc unequipped ${this.weapon.getWeaponInfo().type}`);
+      this.weapon = null;
+    }
+  }
+
+  hasWeapon() {
+    return this.weapon !== null;
+  }
+
+  overclockEquippedWeapon(fireRateReduction, minimumFireRate = 100, speedMultiplier = 1.0) {
+    if (this.hasWeapon()) {
+      this.weapon.overclock(fireRateReduction, minimumFireRate, speedMultiplier);
+      console.log(`${this.team} orc overclocked weapon by reducing fire rate by ${fireRateReduction}ms`);
+    } else {
+      console.log(`${this.team} orc has no weapon to overclock!`);
     }
   }
 
@@ -278,7 +314,7 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
   }
 
   convertToRusher() {
-    // console.log(`Converting ${this.team} orc from ${this.behaviour} to rusher`);
+    console.log(`Converting ${this.team} orc from ${this.behaviour} to rusher`);
     this.behaviour = 'rusher';
     this.setbehaviourStats('rusher');
     this.aiState = 'patrol';
@@ -289,32 +325,35 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
     // Regenerate aim variance as a rusher (removing cover firer accuracy bonus)
     this.generateAimVariance();
 
+    // Re-equip appropriate weapon for new behavior
+    this.equip(LaserGun.createStandardLaser());
+
     // Update label if showing unit info
     if (this.unitInfoLabel) {
-      const fireRateMs = Math.round(this.fireRate);
-      this.unitInfoLabel.setText(`RUSHER\n${fireRateMs}ms`);
+      const weaponInfo = this.hasWeapon() ? this.weapon.getWeaponInfo() : { fireRate: 'N/A' };
+      this.unitInfoLabel.setText(`RUSHER\n${weaponInfo.fireRate}ms`);
     }
   }
 
   createUnitInfoLabel() {
     // Create multi-line text with behavior and fire rate
     const behaviorText = this.behaviour === 'rusher' ? 'RUSHER' : 'COVER';
-    const fireRateMs = Math.round(this.fireRate);
-    const labelText = `${behaviorText}\n${fireRateMs}ms`;
-    const teamColor = this.team === 'blue' ? '#4A90E2' : '#E74C3C'; // Team colors
+    const weaponInfo = this.hasWeapon() ? this.weapon.getWeaponInfo() : { fireRate: 'N/A' };
+    const labelText = `${behaviorText}\n${weaponInfo.fireRate}ms`;
+    const teamColor = this.team === 'blue' ? '#4A90E2' : '#E74C3C';
 
     this.unitInfoLabel = this.scene.add
       .text(this.x, this.y - 25, labelText, {
         fontSize: '9px',
-        fill: teamColor, // ← Use team color from start
-        backgroundColor: 'rgba(0, 0, 0, 0.15)', // Almost transparent black
+        fill: teamColor,
+        backgroundColor: 'rgba(0, 0, 0, 0.15)',
         padding: { x: 4, y: 2 },
-        stroke: '#ffffff', // White outline for visibility
+        stroke: '#ffffff',
         strokeThickness: 1,
-        align: 'center', // Center align the multi-line text
+        align: 'center',
       })
       .setOrigin(0.5);
-    this.unitInfoLabel.setDepth(2); // Above head
+    this.unitInfoLabel.setDepth(2);
   }
 
   cleanupSprites() {
@@ -335,6 +374,9 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
       this.dialog.destroy();
       this.dialog = null;
     }
+    
+    // Unequip weapon (cleanup reference)
+    this.unequip();
     
     // Clean up berserker sprites if this is a berserker
     if (this.type === 'berserker') {
@@ -363,60 +405,26 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
   }
 
   fireLaser() {
-    const gunOffset = 20;
-    const spawnX = this.x + Math.cos(this.rotation) * gunOffset;
-    const spawnY = this.y + Math.sin(this.rotation) * gunOffset;
-
-    // Choose laser type and speed based on orc behavior
-    const isCoverFirer = this.behaviour === 'cover_firer';
-    const laserTexture = isCoverFirer ? 'cover-laser' : 'laser';
-    const speedMultiplier = isCoverFirer ? 2.3 : 1.0; // Cover firers: 2.3x (was 2.0x) = 15% increase
-
-    // Add aim variance - each orc has slightly different accuracy
-    const aimVariance = this.aimVariance || 0; // Use stored variance or default to 0
-    const baseAngle = this.rotation;
-    const aimAngle = baseAngle + (Math.random() - 0.5) * aimVariance * 3;
-
-    const laser = this.scene.physics.add.sprite(spawnX, spawnY, laserTexture);
-    laser.setRotation(aimAngle); // Use adjusted aim angle
-
-    laser.shooter = this;
-    laser.team = this.team;
-    laser.isCoverFirerLaser = isCoverFirer; // Track laser type for potential future use
-
-    laser.setCollideWorldBounds(false);
-    laser.body.setSize(6, 2);
-
-    const maxOrcSpeed = 70;
-    const baseLaserSpeed = maxOrcSpeed * 5.0; // Increased from 3.5 to 5.0 (43% faster)
-    const laserSpeed = baseLaserSpeed * speedMultiplier; // Apply speed multiplier
-    const velocityX = Math.cos(aimAngle) * laserSpeed; // Use aim angle for velocity
-    const velocityY = Math.sin(aimAngle) * laserSpeed; // Use aim angle for velocity
-
-    laser.body.velocity.x = velocityX;
-    laser.body.velocity.y = velocityY;
-    laser.setVelocity(velocityX, velocityY);
-
-    this.scene.lasers.push(laser);
-    this.scene.laserGroup.add(laser);
-
-    this.scene.tweens.add({
-      targets: laser,
-      x: laser.x + velocityX * 3,
-      y: laser.y + velocityY * 3,
-      duration: 3000,
-      ease: 'Linear',
-    });
-
-    // Different muzzle flash color for cover firers
-    const flashColor = isCoverFirer ? 0xffff80 : 0xffff00; // Lighter flash for cover firers
-    const flash = this.scene.add.circle(spawnX, spawnY, 8, flashColor);
-    this.scene.tweens.add({
-      targets: flash,
-      alpha: 0,
-      duration: 100,
-      onComplete: () => flash.destroy(),
-    });
+    if (!this.hasWeapon()) {
+      console.log(`${this.team} orc has no weapon equipped!`);
+      return null;
+    }
+    
+    // Check fire rate timing
+    const currentTime = this.scene.time.now;
+    if (currentTime - this.lastFireTime < this.weapon.fireRate) {
+      return null;
+    }
+    
+    // Fire the weapon
+    const laser = this.weapon.fire(this);
+    
+    if (laser) {
+      this.lastFireTime = currentTime;
+      console.log(`${this.team} orc fired ${this.weapon.getWeaponInfo().type}`);
+    }
+    
+    return laser;
   }
 
   syncSprites() {

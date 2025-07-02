@@ -242,7 +242,10 @@ export function applyBerserkerPhaseMethods(SceneClass) {
 
       // Give the nonbeserker team a fire rate increase
       nonberserkerCandidates.forEach((orc) => {
-        orc.fireRate -= 450;
+        // Overclock weapon instead of directly modifying fireRate
+        orc.overclockEquippedWeapon(450, 50); // Reduce by 450ms, minimum 50ms
+        
+        // Other stat modifications remain the same
         orc.preferredRange += 160;
         orc.bodyTurnSpeed = 2.5;
         orc.headTurnSpeed = 3.5;
@@ -252,13 +255,15 @@ export function applyBerserkerPhaseMethods(SceneClass) {
       setTimeout(() => {
         nonberserkerCandidates.forEach((orc) => {
           if (orc.active) {
-            orc.fireRate -= 120;
+            // Additional overclocking after 6.5 seconds
+            orc.overclockEquippedWeapon(120, 50); // Additional 120ms reduction, minimum 50ms
+            
+            // Other stat modifications remain the same
             orc.bodyTurnSpeed += 0.8;
-            orc.headTurnSpeed +=0.8;
+            orc.headTurnSpeed += 0.8;
           }
         });
-      }, 6500);
-    }
+      }, 6500);    }
   };
 
   SceneClass.prototype.applyEmergencyImmunity = function (orcs) {
