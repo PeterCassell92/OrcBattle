@@ -411,7 +411,7 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
     this.syncSprites();
   }
 
-  fireLaser() {
+  fireLaser(targetAngle = null) {
     console.log(`${this.team} orc attempting to fire laser`);
     
     if (!this.hasWeapon()) {
@@ -427,8 +427,8 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
     
     console.log(`${this.team} orc firing weapon: ${this.weapon.getWeaponInfo().type}`);
     
-    // Fire the weapon
-    const laser = this.weapon.fire(this);
+    // Fire the weapon with optional target angle for enhanced aiming
+    const laser = this.weapon.fire(this, targetAngle);
     
     if (laser) {
       this.lastFireTime = currentTime;

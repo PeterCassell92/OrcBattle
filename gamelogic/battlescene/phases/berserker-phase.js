@@ -245,6 +245,9 @@ export function applyBerserkerPhaseMethods(SceneClass) {
         // Overclock weapon instead of directly modifying fireRate
         orc.overclockEquippedWeapon(450, 50); // Reduce by 450ms, minimum 50ms
         
+        // Enhanced aiming to counter berserker speed
+        orc.enhancedAiming = true;
+        
         // Other stat modifications remain the same
         orc.preferredRange += 160;
         orc.bodyTurnSpeed = 2.5;
@@ -256,7 +259,7 @@ export function applyBerserkerPhaseMethods(SceneClass) {
         nonberserkerCandidates.forEach((orc) => {
           if (orc.active) {
             // Additional overclocking after 6.5 seconds
-            orc.overclockEquippedWeapon(120, 50); // Additional 120ms reduction, minimum 50ms
+            orc.overclockEquippedWeapon(180, 50); // Additional 120ms reduction, minimum 50ms
             
             // Other stat modifications remain the same
             orc.bodyTurnSpeed += 0.8;
