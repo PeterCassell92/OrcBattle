@@ -9,7 +9,7 @@ const archiver = require('archiver');
 const rootDir = path.resolve(__dirname, '..');
 const distDir = path.join(__dirname, 'dist');
 const assetsDir = path.join(rootDir, 'assets');
-const webConfigPath = path.join(__dirname, 'Web.config');
+const webConfigTemplatePath = path.join(__dirname, 'Web.config.template');
 const htmlSourcePath = path.join(rootDir, 'Orcs.html');
 const responsiveCssPath = path.join(rootDir, 'responsive.css');
 const mobileEnhancementsPath = path.join(rootDir, 'mobile-enhancements.js');
@@ -163,17 +163,15 @@ async function brutuallyBundle() {
     copyDir(assetsDir, path.join(distDir, 'assets'));
     console.log('🏺 Treasure plundered successfully!');
 
-    // Process Web.config
-    console.log('⚙️  Forging server battle plans (Web.config)...');
-    let webConfigContent = fs.readFileSync(webConfigPath, 'utf8');
+    // Process Web.config template
+    console.log('⚙️  Forging server battle plans from template (Web.config.template)...');
+    let webConfigContent = fs.readFileSync(webConfigTemplatePath, 'utf8');
 
-    webConfigContent = webConfigContent.replace(
-      '<add value="orcs.html" />',
-      '<add value="index.html" />',
-    );
+    // The template is already production-ready with index.html
+    // No modifications needed - it's a proper IIS configuration
 
     fs.writeFileSync(path.join(distDir, 'Web.config'), webConfigContent);
-    console.log('⚙️  Server battle plans updated!');
+    console.log('⚙️  Server battle plans deployed from template!');
 
     // CREATE DEPLOYMENT ZIP
     console.log('📦 Creating deployment package (orc_build.zip)...');

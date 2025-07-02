@@ -91,7 +91,7 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
       // if (isWarperCandidate) {
       //   this.equip(WeaponFactory.createWarperLaser(scene));
       // } else {
-        this.equip(WeaponFactory.createHeavyLaser(scene));
+      this.equip(WeaponFactory.createHeavyLaser(scene));
       // }
     } else {
       this.equip(WeaponFactory.createStandardLaser(scene));
@@ -187,13 +187,13 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
   equip(weapon) {
     this.weapon = weapon;
     if (weapon) {
-      console.log(`${this.team} orc equipped with ${weapon.getWeaponInfo().type}`);
+      //console.log(`${this.team} orc equipped with ${weapon.getWeaponInfo().type}`);
     }
   }
 
   unequip() {
     if (this.weapon) {
-      console.log(`${this.team} orc unequipped ${this.weapon.getWeaponInfo().type}`);
+      //console.log(`${this.team} orc unequipped ${this.weapon.getWeaponInfo().type}`);
       this.weapon = null;
     }
   }
@@ -205,13 +205,13 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
   overclockEquippedWeapon(fireRateReduction, minimumFireRate = 100, speedMultiplier = 1.0) {
     if (this.hasWeapon()) {
       this.weapon.overclock(fireRateReduction, minimumFireRate, speedMultiplier);
-      
+
       // CRITICAL FIX: Also update the orc's fireRate to match the weapon
       this.fireRate = this.weapon.fireRate;
-      
-      console.log(`${this.team} orc overclocked weapon by reducing fire rate by ${fireRateReduction}ms - orc fireRate now: ${this.fireRate}ms`);
+
+      //console.log(`${this.team} orc overclocked weapon by reducing fire rate by ${fireRateReduction}ms - orc fireRate now: ${this.fireRate}ms`);
     } else {
-      console.log(`${this.team} orc has no weapon to overclock!`);
+      //console.log(`${this.team} orc has no weapon to overclock!`);
     }
   }
 
@@ -385,22 +385,22 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
       this.dialog.destroy();
       this.dialog = null;
     }
-    
+
     // Unequip weapon (cleanup reference)
     this.unequip();
-    
+
     // Clean up berserker sprites if this is a berserker
     if (this.type === 'berserker') {
       if (this.healthBar) {
         this.healthBar.destroy();
         this.healthBar = null;
       }
-      
+
       if (this.healthBarBg) {
         this.healthBarBg.destroy();
         this.healthBarBg = null;
       }
-      
+
       if (this.invulnerabilityIndicator) {
         this.invulnerabilityIndicator.destroy();
         this.invulnerabilityIndicator = null;
@@ -416,31 +416,31 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
   }
 
   fireLaser(targetAngle = null) {
-    console.log(`${this.team} orc attempting to fire laser`);
-    
+    //console.log(`${this.team} orc attempting to fire laser`);
+
     if (!this.hasWeapon()) {
-      console.log(`${this.team} orc has no weapon equipped!`);
+      //console.log(`${this.team} orc has no weapon equipped!`);
       return null;
     }
-    
+
     // Check fire rate timing
     const currentTime = this.scene.time.now;
     if (currentTime - this.lastFireTime < this.weapon.fireRate) {
       return null;
     }
-    
-    console.log(`${this.team} orc firing weapon: ${this.weapon.getWeaponInfo().type}`);
-    
+
+    //console.log(`${this.team} orc firing weapon: ${this.weapon.getWeaponInfo().type}`);
+
     // Fire the weapon with optional target angle for enhanced aiming
     const laser = this.weapon.fire(this, targetAngle);
-    
+
     if (laser) {
       this.lastFireTime = currentTime;
-      console.log(`${this.team} orc successfully fired ${this.weapon.getWeaponInfo().type}`);
+      //console.log(`${this.team} orc successfully fired ${this.weapon.getWeaponInfo().type}`);
     } else {
-      console.log(`${this.team} orc weapon.fire() returned null!`);
+      //console.log(`${this.team} orc weapon.fire() returned null!`);
     }
-    
+
     return laser;
   }
 
@@ -462,7 +462,7 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
     if (this.dialog) {
       this.dialog.update();
     }
-    
+
     // Sync berserker-specific sprites (health bar and invulnerability indicator)
     if (this.type === 'berserker' && this.syncBerserkerSprites) {
       this.syncBerserkerSprites();

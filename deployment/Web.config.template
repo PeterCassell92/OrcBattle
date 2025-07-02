@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <system.web>
+    <!-- Allow anonymous access -->
+    <authorization>
+      <allow users="*" />
+    </authorization>
+    <!-- Disable compilation for static files -->
+    <compilation debug="false" />
+  </system.web>
+  
+  <system.webServer>
+    <!-- Set index.html as default document -->
+    <defaultDocument>
+      <files>
+        <clear />
+        <add value="index.html" />
+      </files>
+    </defaultDocument>
+    
+    <!-- Ensure proper MIME types for all resources -->
+    <staticContent>
+      <!-- JavaScript files -->
+      <remove fileExtension=".js" />
+      <mimeMap fileExtension=".js" mimeType="application/javascript" />
+      
+      <!-- JSON files -->
+      <remove fileExtension=".json" />
+      <mimeMap fileExtension=".json" mimeType="application/json" />
+      
+      <!-- CSS files -->
+      <remove fileExtension=".css" />
+      <mimeMap fileExtension=".css" mimeType="text/css" />
+      
+      <!-- Image files -->
+      <remove fileExtension=".png" />
+      <mimeMap fileExtension=".png" mimeType="image/png" />
+      
+      <remove fileExtension=".jpg" />
+      <mimeMap fileExtension=".jpg" mimeType="image/jpeg" />
+      
+      <remove fileExtension=".gif" />
+      <mimeMap fileExtension=".gif" mimeType="image/gif" />
+      
+      <!-- HTML files -->
+      <remove fileExtension=".html" />
+      <mimeMap fileExtension=".html" mimeType="text/html" />
+    </staticContent>
+    
+    <!-- Handle errors gracefully -->
+    <httpErrors errorMode="Detailed" />
+    
+    <!-- Enable compression for better performance -->
+    <httpCompression>
+      <dynamicTypes>
+        <clear />
+        <add mimeType="text/*" enabled="true" />
+        <add mimeType="message/*" enabled="true" />
+        <add mimeType="application/javascript" enabled="true" />
+        <add mimeType="application/json" enabled="true" />
+      </dynamicTypes>
+      <staticTypes>
+        <clear />
+        <add mimeType="text/*" enabled="true" />
+        <add mimeType="message/*" enabled="true" />
+        <add mimeType="application/javascript" enabled="true" />
+        <add mimeType="*/*" enabled="false" />
+      </staticTypes>
+    </httpCompression>
+  </system.webServer>
+</configuration>

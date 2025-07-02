@@ -202,7 +202,7 @@ export function applyBerserkerPhaseMethods(SceneClass) {
       const mediumBerserkerConditionDifferential = 9;
       const highBerserkerConditionDifferential = 15;
       if (majorityUnitAdvantage >= highBerserkerConditionDifferential) {
-        return 2.7;
+        return 3;
       }
       if (majorityUnitAdvantage >= mediumBerserkerConditionDifferential) {
         return 1.8;
@@ -239,15 +239,16 @@ export function applyBerserkerPhaseMethods(SceneClass) {
 
       // Then activate the full berserker trio system with strength modifier
       this.activateBerserkerTrio(berserkerTeam, berserkerCandidates, berserkerMode);
-
+      console.log('Hardening up non-berserker team');
       // Give the nonbeserker team a fire rate increase
       nonberserkerCandidates.forEach((orc) => {
         // Overclock weapon instead of directly modifying fireRate
-        orc.overclockEquippedWeapon(100, 50); // Reduce by 450ms, minimum 50ms
-        
+
+        orc.overclockEquippedWeapon(125 - (10 * berserkerMode), 50);
+
         // Enhanced aiming to counter berserker speed
         orc.enhancedAiming = true;
-        
+
         // Other stat modifications remain the same
         orc.preferredRange += 160;
         orc.bodyTurnSpeed = 2.5;
@@ -256,17 +257,19 @@ export function applyBerserkerPhaseMethods(SceneClass) {
       });
 
       setTimeout(() => {
+        console.log('SECOND Hardening up of non-berserker team');
         nonberserkerCandidates.forEach((orc) => {
           if (orc.active) {
             // Additional overclocking after 9.5 seconds
-            orc.overclockEquippedWeapon(125, 50); // Additional 120ms reduction, minimum 50ms
-            
+            orc.overclockEquippedWeapon(95 - (10 * berserkerMode), 50); // Additional 120ms reduction, minimum 50ms
+
             // Other stat modifications remain the same
             orc.bodyTurnSpeed += 0.8;
             orc.headTurnSpeed += 0.8;
           }
         });
-      }, 9500);    }
+      }, 6500);
+    }
   };
 
   SceneClass.prototype.applyEmergencyImmunity = function (orcs) {

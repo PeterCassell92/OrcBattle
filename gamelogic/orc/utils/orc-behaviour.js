@@ -107,7 +107,7 @@ export const OrcBehaviour = {
                 // Predict where the berserker will be and aim there
                 firingAngle = this.calculatePredictiveAim(orc, closestEnemy);
               }
-              
+
               // Fire with or without predictive angle
               if (firingAngle !== null) {
                 orc.fireLaser(firingAngle);
@@ -138,35 +138,35 @@ export const OrcBehaviour = {
     if (Math.random() > enhancedAimingChance) {
       return null; // Use normal aiming
     }
-    
+
     // Get target's current velocity
     const targetVelocity = target.body ? {
       x: target.body.velocity.x,
-      y: target.body.velocity.y
+      y: target.body.velocity.y,
     } : { x: 0, y: 0 };
-    
+
     // Only use predictive aiming if target is moving fast enough
     const targetSpeed = Math.sqrt(targetVelocity.x * targetVelocity.x + targetVelocity.y * targetVelocity.y);
     if (targetSpeed < 30) {
       return null; // Target not moving fast enough to justify prediction
     }
-    
+
     // Calculate laser travel time (assuming average laser speed)
     const laserSpeed = shooter.weapon ? shooter.weapon.laserSpeed || 350 : 350;
     const distanceToTarget = Phaser.Math.Distance.Between(shooter.x, shooter.y, target.x, target.y);
     const travelTime = distanceToTarget / laserSpeed;
-    
+
     // Predict target's future position
     const predictedX = target.x + targetVelocity.x * travelTime;
     const predictedY = target.y + targetVelocity.y * travelTime;
-    
+
     // Add slight inaccuracy to make it challenging but not perfect
     const aimVariance = shooter.aimVariance || 0.1;
     const randomOffset = (Math.random() - 0.5) * aimVariance * 2;
-    
+
     // Calculate angle to predicted position
     const predictiveAngle = Phaser.Math.Angle.Between(shooter.x, shooter.y, predictedX, predictedY);
-    
+
     return predictiveAngle + randomOffset;
   },
 
@@ -630,10 +630,10 @@ export const OrcBehaviour = {
     if (closestBlockingTerrain && closestDistance < 75) {
       orc.destroyTerrainChunk(closestBlockingTerrain);
 
-      const chanceOfMiniHeal = 0.55;
+      const chanceOfMiniHeal = 0.8;
 
       if (Math.random() <= chanceOfMiniHeal) {
-        orc.health += 0.18 + (orc.berserkerStrengthBonus / 20);
+        orc.health += 0.25;
       }
 
       // Reset frustration timer by updating lastFireTime (berserker feels better after destroying something)
