@@ -139,7 +139,7 @@ export function applyBattlefieldStateMethods(SceneClass) {
     }
 
     if (corrected) {
-      console.log(`Position corrected for ${orc.team} orc - new position: (${orc.x.toFixed(1)}, ${orc.y.toFixed(1)})`);
+      //console.log(`Position corrected for ${orc.team} orc - new position: (${orc.x.toFixed(1)}, ${orc.y.toFixed(1)})`);
       // Update sprite positions after correction
       orc.syncSprites();
     }

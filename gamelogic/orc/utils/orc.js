@@ -2,6 +2,7 @@ import { userSettings } from '../../setup.js';
 import { SpeechBubble } from '../../dialogUI/speechbubble.js';
 import { SpriteGenerator } from '../../sprites/spriteGenerator.js';
 import { LaserGun } from '../../weapons/laser-gun.js';
+import { WeaponFactory } from '../../weapons/weapon-factory.js';
 
 export class Orc extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, team, behaviour = 'rusher') {
@@ -85,9 +86,15 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 
     // EQUIP APPROPRIATE WEAPON
     if (behaviour === 'cover_firer') {
-      this.equip(LaserGun.createHeavyLaser());
+      // Temporarily disable warp cannons - too complex for simple peon brain
+      // const isWarperCandidate = Math.random() < 0.3; // Roughly 30% chance for warper
+      // if (isWarperCandidate) {
+      //   this.equip(WeaponFactory.createWarperLaser(scene));
+      // } else {
+        this.equip(WeaponFactory.createHeavyLaser(scene));
+      // }
     } else {
-      this.equip(LaserGun.createStandardLaser());
+      this.equip(WeaponFactory.createStandardLaser(scene));
     }
 
     // Initialize collision state
@@ -216,19 +223,19 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
       this.aimVariance *= 0.7;
     }
 
-    console.log(
-      `${this.team} ${this.behaviour} orc aim variance: ${((this.aimVariance * 180) / Math.PI).toFixed(1)}°`,
-    );
+    // console.log(
+    //   `${this.team} ${this.behaviour} orc aim variance: ${((this.aimVariance * 180) / Math.PI).toFixed(1)}°`,
+    // );
   }
 
   setbehaviourStats(behaviour) {
     if (behaviour === 'rusher') {
-      this.moveSpeed = 70;
+      this.moveSpeed = 100; // Increased from 70 - rushers should be fast!
       this.bodyTurnSpeed = 2;
       this.preferredRange = 120;
     } else {
       // cover_firer
-      this.moveSpeed = 45;
+      this.moveSpeed = 55;
       this.bodyTurnSpeed = 1.5;
       this.preferredRange = 250;
     }
@@ -314,19 +321,19 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
   }
 
   convertToRusher() {
-    console.log(`Converting ${this.team} orc from ${this.behaviour} to rusher`);
+    //console.log(`Converting ${this.team} orc from ${this.behaviour} to rusher`);
     this.behaviour = 'rusher';
     this.setbehaviourStats('rusher');
     this.aiState = 'patrol';
     this.coverTarget = null;
     this.advanceWaypoint = null;
-    this.bodyTurnSpeed = 2.5;
+    // bodyTurnSpeed now set by setbehaviourStats to 2.5
 
     // Regenerate aim variance as a rusher (removing cover firer accuracy bonus)
     this.generateAimVariance();
 
     // Re-equip appropriate weapon for new behavior
-    this.equip(LaserGun.createStandardLaser());
+    this.equip(LaserGun.createStandardLaser(this.scene));
 
     // Update label if showing unit info
     if (this.unitInfoLabel) {
@@ -405,6 +412,8 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
   }
 
   fireLaser() {
+    console.log(`${this.team} orc attempting to fire laser`);
+    
     if (!this.hasWeapon()) {
       console.log(`${this.team} orc has no weapon equipped!`);
       return null;
@@ -416,12 +425,16 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
       return null;
     }
     
+    console.log(`${this.team} orc firing weapon: ${this.weapon.getWeaponInfo().type}`);
+    
     // Fire the weapon
     const laser = this.weapon.fire(this);
     
     if (laser) {
       this.lastFireTime = currentTime;
-      console.log(`${this.team} orc fired ${this.weapon.getWeaponInfo().type}`);
+      console.log(`${this.team} orc successfully fired ${this.weapon.getWeaponInfo().type}`);
+    } else {
+      console.log(`${this.team} orc weapon.fire() returned null!`);
     }
     
     return laser;

@@ -1,10 +1,11 @@
 /**
- * LaserGun Class - Weapon system for Orc combat units
- * Handles all laser firing mechanics in an Object-Oriented fashion
+ * LaserGun Class - Standard weapon system for Orc combat units
+ * Handles basic laser firing mechanics in an Object-Oriented fashion
  */
 export class LaserGun {
   /**
    * Create a laser weapon
+   * @param {Phaser.Scene} scene - The game scene this weapon belongs to
    * @param {Object} config - Weapon configuration object
    * @param {number} [config.fireRate=1000] - Time between shots in milliseconds (lower = faster)
    * @param {string} [config.laserTexture='laser'] - Phaser texture key for laser projectile sprite
@@ -15,8 +16,11 @@ export class LaserGun {
    * @param {number} [config.barrelOffset=20] - Distance from orc center to weapon barrel in pixels
    * @param {string} [config.weaponType='Standard Laser'] - Display name for weapon type (for debugging/UI)
    */
-  constructor(config = {}) {
-    // Base weapon properties - no owner reference needed
+  constructor(scene, config = {}) {
+    // Store scene reference for safe laser lifecycle management
+    this.scene = scene;
+    
+    // Base weapon properties
     this.fireRate = config.fireRate || 1000;
     this.baseFireRate = this.fireRate; // Store original fire rate for overclocking
     
@@ -51,25 +55,25 @@ export class LaserGun {
     if (!shooter || !shooter.active || !shooter.scene) return null;
     
     // Calculate firing position
-    const firingAngle = targetAngle !== null ? targetAngle : shooter.rotation;
-    const spawnX = shooter.x + Math.cos(firingAngle) * this.barrelOffset;
-    const spawnY = shooter.y + Math.sin(firingAngle) * this.barrelOffset;
+    const baseAngle = targetAngle !== null ? targetAngle : shooter.rotation;
+    const spawnX = shooter.x + Math.cos(baseAngle) * this.barrelOffset;
+    const spawnY = shooter.y + Math.sin(baseAngle) * this.barrelOffset;
     
-    // Apply aim variance from the orc, not the weapon
+    // Apply aim variance from the orc
     const aimVariance = shooter.aimVariance || 0;
-    const aimAngle = firingAngle + (Math.random() - 0.5) * aimVariance * 3;
+    const firingAngle = baseAngle + (Math.random() - 0.5) * aimVariance * 3;
     
     // Create laser projectile
-    const laser = this.createLaserProjectile(shooter, spawnX, spawnY, aimAngle);
+    const laser = this.createLaserProjectile(shooter, spawnX, spawnY, firingAngle);
     
     // Create muzzle flash effect
-    this.createMuzzleFlash(shooter.scene, spawnX, spawnY);
+    this.createMuzzleFlash(spawnX, spawnY);
     
     return laser;
   }
   
   /**
-   * Create the actual laser projectile sprite
+   * Create a standard laser projectile sprite
    * @param {IOrc} shooter - The orc firing the weapon  
    * @param {number} x - Spawn X coordinate
    * @param {number} y - Spawn Y coordinate
@@ -77,37 +81,37 @@ export class LaserGun {
    * @returns {Phaser.Physics.Arcade.Sprite} The created laser sprite
    */
   createLaserProjectile(shooter, x, y, angle) {
-    const laser = shooter.scene.physics.add.sprite(x, y, this.laserTexture);
+    const laser = this.scene.physics.add.sprite(x, y, this.laserTexture);
     laser.setRotation(angle);
     
     // Set laser properties
     laser.shooter = shooter;
     laser.team = shooter.team;
-    laser.weapon = this; // Reference back to weapon
+    laser.weapon = this;
     
     // Physics setup
     laser.setCollideWorldBounds(false);
     laser.body.setSize(6, 2);
     
-    // Calculate velocity using current (possibly overclocked) speed
+    // Calculate and set velocity
     const velocityX = Math.cos(angle) * this.laserSpeed;
     const velocityY = Math.sin(angle) * this.laserSpeed;
     laser.setVelocity(velocityX, velocityY);
     
     // Add to scene arrays
-    shooter.scene.lasers.push(laser);
-    shooter.scene.laserGroup.add(laser);
+    this.scene.lasers.push(laser);
+    this.scene.laserGroup.add(laser);
     
-    // Set up laser lifetime
-    shooter.scene.tweens.add({
+    // Set up laser movement and lifetime
+    this.scene.tweens.add({
       targets: laser,
       x: laser.x + velocityX * 3,
       y: laser.y + velocityY * 3,
       duration: this.laserRange,
       ease: 'Linear',
       onComplete: () => {
-        if (laser.active) {
-          this.destroyLaser(laser, shooter.scene);
+        if (laser.active && this.scene) {
+          this.destroyLaser(laser);
         }
       }
     });
@@ -116,14 +120,15 @@ export class LaserGun {
   }
   
   /**
-   * Create muzzle flash effect with appropriate color based on overclock status
-   * @param {Phaser.Scene} scene - The game scene
+   * Create muzzle flash effect
    * @param {number} x - Flash X coordinate  
    * @param {number} y - Flash Y coordinate
    */
-  createMuzzleFlash(scene, x, y) {
-    const flash = scene.add.circle(x, y, this.muzzleFlashSize, this.muzzleFlashColor);
-    scene.tweens.add({
+  createMuzzleFlash(x, y) {
+    if (!this.scene) return;
+    
+    const flash = this.scene.add.circle(x, y, this.muzzleFlashSize, this.muzzleFlashColor);
+    this.scene.tweens.add({
       targets: flash,
       alpha: 0,
       duration: 100,
@@ -134,15 +139,14 @@ export class LaserGun {
   /**
    * Safely destroy a laser projectile
    * @param {Phaser.Physics.Arcade.Sprite} laser - The laser to destroy
-   * @param {Phaser.Scene} scene - The game scene
    */
-  destroyLaser(laser, scene) {
-    if (!laser || !laser.active) return;
+  destroyLaser(laser) {
+    if (!laser || !laser.active || !this.scene) return;
     
     // Remove from scene arrays
-    scene.lasers = scene.lasers.filter(l => l !== laser);
-    if (scene.laserGroup) {
-      scene.laserGroup.remove(laser);
+    this.scene.lasers = this.scene.lasers.filter(l => l !== laser);
+    if (this.scene.laserGroup) {
+      this.scene.laserGroup.remove(laser);
     }
     
     // Destroy the sprite
@@ -203,13 +207,14 @@ export class LaserGun {
   
   /**
    * Create a standard laser weapon for regular orcs and rushers
+   * @param {Phaser.Scene} scene - The game scene
    * @returns {LaserGun} Configured standard laser weapon
    */
-  static createStandardLaser() {
-    return new LaserGun({
-      fireRate: 800 + Math.random() * 400,
+  static createStandardLaser(scene) {
+    return new LaserGun(scene, {
+      fireRate: 500 + Math.random() * 400,
       laserTexture: 'laser',
-      laserSpeed: 350, // 70 * 5.0
+      laserSpeed: 450,
       muzzleFlashColor: 0xffff00, // Yellow
       weaponType: 'Standard Laser'
     });
@@ -217,15 +222,34 @@ export class LaserGun {
   
   /**
    * Create a heavy laser weapon for cover firers  
+   * @param {Phaser.Scene} scene - The game scene
    * @returns {LaserGun} Configured heavy laser weapon
    */
-  static createHeavyLaser() {
-    return new LaserGun({
+  static createHeavyLaser(scene) {
+    return new LaserGun(scene, {
       fireRate: (800 + Math.random() * 400) * 0.9, // 10% faster base rate
       laserTexture: 'cover-laser',
       laserSpeed: 350 * 2.3, // Much faster projectiles
       muzzleFlashColor: 0xffff80, // Light yellow
       weaponType: 'Heavy Laser'
+    });
+  }
+  
+  /**
+   * Create a warp cannon weapon that fires spiraling projectiles
+   * @param {Phaser.Scene} scene - The game scene
+   * @returns {WarpCannon} Configured warp cannon weapon  
+   */
+  static createWarperLaser(scene) {
+    // This method kept for backward compatibility
+    // Use WeaponFactory.createWarperLaser() for proper WarpCannon creation
+    return new LaserGun(scene, {
+      fireRate: 150,
+      laserTexture: 'laser',
+      laserSpeed: 400,
+      muzzleFlashColor: 0xff69b4, // Hot pink
+      muzzleFlashSize: 12,
+      weaponType: 'Warp Cannon (Placeholder)'
     });
   }
 }

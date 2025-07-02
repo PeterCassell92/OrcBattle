@@ -202,13 +202,13 @@ export function applyBerserkerPhaseMethods(SceneClass) {
       const mediumBerserkerConditionDifferential = 9;
       const highBerserkerConditionDifferential = 15;
       if (majorityUnitAdvantage >= highBerserkerConditionDifferential) {
-        return 3.5;
+        return 3;
       }
       if (majorityUnitAdvantage >= mediumBerserkerConditionDifferential) {
-        return 2;
+        return 1.8;
       }
       if (majorityUnitAdvantage >= normalBerserkerConditionDifferential) {
-        return 1;
+        return 0.5;
       }
       return null;
     }

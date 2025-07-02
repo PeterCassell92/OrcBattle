@@ -277,4 +277,93 @@ export function applyEffectMethods(SceneClass) {
       });
     }
   };
+  
+  // Warper laser impact effect with sparky pink energy discharge
+  SceneClass.prototype.createWarperLaserImpactEffect = function(x, y, blueShade) {
+    // Calculate dynamic pink color based on spiral progression
+    const pinkIntensity = (Math.sin(blueShade) + 1) / 2; // 0 to 1
+    const red = 255;
+    const lightGreen = Math.floor(105 + pinkIntensity * 50); // 105-155 range
+    const mediumGreen = Math.floor(80 + pinkIntensity * 75); // 80-155 range  
+    const darkGreen = Math.floor(50 + pinkIntensity * 55);   // 50-105 range
+    const lightBlue = Math.floor(180 + pinkIntensity * 75); // 180-255 range
+    const mediumBlue = Math.floor(150 + pinkIntensity * 105); // 150-255 range
+    const darkBlue = Math.floor(120 + pinkIntensity * 135);   // 120-255 range
+    
+    const primaryColor = (red << 16) | (lightGreen << 8) | lightBlue; // Light pink
+    const secondaryColor = (red << 16) | (mediumGreen << 8) | mediumBlue; // Medium pink
+    const sparkColor = (red << 16) | (darkGreen << 8) | darkBlue; // Dark pink
+    
+    // Main impact burst
+    const burst = this.add.circle(x, y, 6, primaryColor, 0.9);
+    burst.setStrokeStyle(2, 0xffffff, 0.7);
+    
+    this.tweens.add({
+      targets: burst,
+      radius: 18,
+      alpha: 0,
+      duration: 300,
+      ease: 'Power2.out',
+      onComplete: () => burst.destroy()
+    });
+    
+    // Electric spark effects radiating outward
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+      const sparkDistance = 12 + Math.random() * 15;
+      const sparkX = x + Math.cos(angle) * sparkDistance;
+      const sparkY = y + Math.sin(angle) * sparkDistance;
+      
+      // Create jagged spark line effect
+      const spark = this.add.circle(sparkX, sparkY, 1.5, sparkColor, 0.8);
+      
+      this.tweens.add({
+        targets: spark,
+        x: sparkX + Math.cos(angle) * (20 + Math.random() * 15),
+        y: sparkY + Math.sin(angle) * (20 + Math.random() * 15),
+        alpha: 0,
+        scale: 0.3,
+        duration: 250 + Math.random() * 150,
+        ease: 'Power3.out',
+        onComplete: () => spark.destroy()
+      });
+    }
+    
+    // Secondary energy ring
+    const ring = this.add.circle(x, y, 10, secondaryColor, 0.6);
+    ring.setStrokeStyle(1, secondaryColor, 0.8);
+    ring.isFilled = false;
+    
+    this.tweens.add({
+      targets: ring,
+      radius: 25,
+      alpha: 0,
+      duration: 400,
+      ease: 'Power2.out',
+      delay: 50,
+      onComplete: () => ring.destroy()
+    });
+    
+    // Crackling energy particles
+    for (let i = 0; i < 12; i++) {
+      const particleAngle = Math.random() * Math.PI * 2;
+      const particleDistance = 5 + Math.random() * 8;
+      const particleX = x + Math.cos(particleAngle) * particleDistance;
+      const particleY = y + Math.sin(particleAngle) * particleDistance;
+      
+      const particle = this.add.circle(particleX, particleY, 0.8, primaryColor, 0.9);
+      
+      this.tweens.add({
+        targets: particle,
+        x: particleX + (Math.random() - 0.5) * 30,
+        y: particleY + (Math.random() - 0.5) * 30,
+        alpha: 0,
+        scale: 0,
+        duration: 200 + Math.random() * 200,
+        ease: 'Power2.out',
+        delay: Math.random() * 100,
+        onComplete: () => particle.destroy()
+      });
+    }
+  };
 }

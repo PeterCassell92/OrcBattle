@@ -1,4 +1,5 @@
 import { LaserGun } from '../../weapons/laser-gun.js';
+import { WarpCannon } from '../../weapons/warp-cannon.js';
 
 export function applyBerserkerFeatures(OrcClass) {
   OrcClass.prototype.convertToBerserker = function () {
@@ -42,7 +43,7 @@ export function applyBerserkerFeatures(OrcClass) {
     if (this.head) this.head.clearTint();
 
     // Set berserker stats
-    this.health = 4.5 + (this.berserkerStrengthBonus / 3 || 0);
+    this.health = 2.5 + (this.berserkerStrengthBonus / 2 || 0);
     this.maxHealth = this.health; // Store maximum health for health bar calculations
 
     this.maxLaserResistance = 0.95;
@@ -50,8 +51,8 @@ export function applyBerserkerFeatures(OrcClass) {
     this.laserResistance = 0.6 + 0.1 * (this.berserkerStrengthBonus || 0); // 50% chance to resist + 10% per bonus
     this.deflectionsCount = 0; // Track total deflections
     this.deflectionsThisDecay = 0; // Track deflections since last decay
-    this.resistanceDecayRate = 2.5 + 3 * this.berserkerStrengthBonus; //shots deflected to lose the decay amount
-    this.resistanceDecayAmount = 0.175 - ((2 * this.berserkerStrengthBonus) / 100); //Lose resistance in chunks
+    this.resistanceDecayRate = Math.round(1.5 + 2 * this.berserkerStrengthBonus); //shots deflected to lose the decay amount
+    this.resistanceDecayAmount = 0.145 - ((1.5 * this.berserkerStrengthBonus) / 100); //Lose resistance in chunks
     this.canUseLaser = false; // Cannot use laser attacks
     this.hasSwordAttack = true; // Must use sword attacks
     this.hasAxeAttack = true; // Can destroy terrain with axe
@@ -65,7 +66,7 @@ export function applyBerserkerFeatures(OrcClass) {
     this.terrainPatience = this.generateTerrainPatience();
 
     // Update behavior for berserker
-    this.moveSpeed = 125; // Much faster movement (was 90)
+    this.moveSpeed = 112 + this.berserkerStrengthBonus * 3; // Much faster movement (was 90)
     this.preferredRange = 40; // Close combat range for sword
     this.fireRate = 300; // Much faster attack rate for berserkers (was 400)
     this.bodyTurnSpeed = 3.5; // Faster turning for berserkers
@@ -605,9 +606,15 @@ export function applyBerserkerFeatures(OrcClass) {
 
     // RE-EQUIP APPROPRIATE WEAPON
     if (this.behaviour === 'cover_firer') {
-      this.equip(LaserGun.createHeavyLaser());
+      // Randomly select warp cannon or heavy laser for cover firers
+      const isWarperCandidate = Math.random() < 0.3;
+      if (isWarperCandidate) {
+        this.equip(LaserGun.createWarperLaser(this.scene));
+      } else {
+        this.equip(LaserGun.createHeavyLaser(this.scene));
+      }
     } else {
-      this.equip(LaserGun.createStandardLaser());
+      this.equip(LaserGun.createStandardLaser(this.scene));
     }
 
     console.log(`Cleaned up all berserker effects for ${this.team} orc`);

@@ -72,7 +72,12 @@ export function applyCollisionMethods(SceneClass) {
     // console.log(`${orc.team} orc taking damage - health before: ${orc.health}`);
     orc.health--;
     // console.log(`${orc.team} orc health after damage: ${orc.health}`);
-
+    
+    // Special warper laser impact effect
+    if (laser.isWarpLaser) {
+      scene.createWarperLaserImpactEffect(laser.x, laser.y, laser.warperBlueShade || 0);
+    }
+    
     orc.setTint(0xff0000);
     scene.tweens.add({
       targets: orc,
@@ -118,14 +123,20 @@ export function applyCollisionMethods(SceneClass) {
   /** @type {IBattleScene} */
     const scene = this;
 
-    const spark = scene.add.circle(laser.x, laser.y, 4, 0xffffff);
-    scene.tweens.add({
-      targets: spark,
-      alpha: 0,
-      scale: 2,
-      duration: 200,
-      onComplete: () => spark.destroy(),
-    });
+    // Special warper laser terrain impact effect
+    if (laser.isWarpLaser) {
+      scene.createWarperLaserImpactEffect(laser.x, laser.y, laser.warperBlueShade || 0);
+    } else {
+      // Normal laser spark effect
+      const spark = scene.add.circle(laser.x, laser.y, 4, 0xffffff);
+      scene.tweens.add({
+        targets: spark,
+        alpha: 0,
+        scale: 2,
+        duration: 200,
+        onComplete: () => spark.destroy(),
+      });
+    }
 
     scene.lasers = scene.lasers.filter((l) => l !== laser);
     laser.destroy();

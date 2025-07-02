@@ -1,5 +1,6 @@
 // Main game scene and core logic
 import { OrcBehaviour } from '../../orc/utils/orc-behaviour.js';
+import { WarpCannon } from '../../weapons/warp-cannon.js';
 
 /**
  * The BattleScene Contains the Main Game Creation and Game Loop logic.
@@ -88,7 +89,7 @@ export class BattleScene extends Phaser.Scene {
 
     // King release system
     this.kingsReleased = false;
-    this.kingReleaseTime = 14000; // 14 seconds in milliseconds
+    this.kingReleaseTime = 11000; // 11 seconds in milliseconds
 
     // Create all sprites first
     scene.createFlagSprites();
@@ -228,6 +229,9 @@ export class BattleScene extends Phaser.Scene {
         OrcBehaviour.checkIfOrcStuck(this, orc, time);
       }
     });
+
+    // Update warp cannon corkscrew motion
+    WarpCannon.updateWarpLasers(this, time, delta);
 
     scene.updateLaserPositions(delta);
 
