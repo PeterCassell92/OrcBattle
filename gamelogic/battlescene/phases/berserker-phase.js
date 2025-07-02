@@ -252,10 +252,12 @@ export function applyBerserkerPhaseMethods(SceneClass) {
       setTimeout(() => {
         nonberserkerCandidates.forEach((orc) => {
           if (orc.active) {
-            orc.fireRate -= 100;
+            orc.fireRate -= 120;
+            orc.bodyTurnSpeed += 0.8;
+            orc.headTurnSpeed +=0.8;
           }
         });
-      }, 7500);
+      }, 6500);
     }
   };
 
