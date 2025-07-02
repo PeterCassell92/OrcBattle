@@ -134,7 +134,7 @@ export const OrcBehaviour = {
    */
   calculatePredictiveAim(shooter, target) {
     // Only apply enhanced aiming occasionally to balance gameplay
-    const enhancedAimingChance = 0.35; // 35% chance to use enhanced aiming
+    const enhancedAimingChance = 0.52 - shooter.aimVariance;
     if (Math.random() > enhancedAimingChance) {
       return null; // Use normal aiming
     }
@@ -519,7 +519,7 @@ export const OrcBehaviour = {
     // Check if berserker should destroy terrain based on lack of sword attacks
     // If they haven't been able to use their sword for 0.7s, they get frustrated and use axe
     const timeSinceLastSwordAttack = time - orc.lastFireTime;
-    const swordFrustrationThreshold = 700; // 0.7 seconds
+    const swordFrustrationThreshold = 500; // 0.7 seconds
 
     if (timeSinceLastSwordAttack > swordFrustrationThreshold) {
       // Berserker is frustrated from not using sword - look for terrain to destroy
@@ -627,13 +627,13 @@ export const OrcBehaviour = {
     }
 
     // If we found terrain and we're close enough, use axe
-    if (closestBlockingTerrain && closestDistance < 70) {
+    if (closestBlockingTerrain && closestDistance < 75) {
       orc.destroyTerrainChunk(closestBlockingTerrain);
 
-      const chanceOfMiniHeal = 0.5;
+      const chanceOfMiniHeal = 0.55;
 
       if (Math.random() <= chanceOfMiniHeal) {
-        orc.health += 0.4;
+        orc.health += 0.18 + (orc.berserkerStrengthBonus / 20);
       }
 
       // Reset frustration timer by updating lastFireTime (berserker feels better after destroying something)

@@ -29,7 +29,7 @@ export function applyUnitCreationMethods(SceneClass) {
     // Number of Orcs
     // Create blue team (left side, avoiding alcove)
     for (let i = 0; i < orcsPerTeam; i++) {
-      const behaviour = i < orcsPerTeam / 2 ? 'cover_firer' : 'rusher';
+      const behaviour = i < orcsPerTeam / 2.5 ? 'cover_firer' : 'rusher';
       const blueX = Phaser.Math.Between(blueXMin + 32, blueXMax - 32);
       const blueY = getValidYPosition(100 + i * 80 + Math.random() * 40, yMin, yMax);
       const blueOrc = this.createOrc(blueX, blueY, 'blue', behaviour);
@@ -42,7 +42,7 @@ export function applyUnitCreationMethods(SceneClass) {
 
     // Create red team (right side, avoiding alcove)
     for (let i = 0; i < orcsPerTeam; i++) {
-      const behaviour = i < orcsPerTeam / 2 ? 'cover_firer' : 'rusher';
+      const behaviour = i < orcsPerTeam / 2.5 ? 'cover_firer' : 'rusher';
       const redX = Phaser.Math.Between(redXMin + 32, redXMax - 32);
       const redY = getValidYPosition(100 + i * 80 + Math.random() * 40, yMin, yMax);
 

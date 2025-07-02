@@ -57,7 +57,7 @@ export function applyCoverFirersAdvancePhaseMethods(SceneClass) {
     const gameTime = (Date.now() - this.gameStartTime) / 1000;
     let stripThreshold;
 
-    if (gameTime >= 10) {
+    if (gameTime >= 8) {
       if (coverFirers.length) {
         console.log('Aggression reached - All Units Rushers');
       }
@@ -68,12 +68,12 @@ export function applyCoverFirersAdvancePhaseMethods(SceneClass) {
         }
       });
       return;
-    } else if (gameTime >= 5) {
+    } else if (gameTime >= 4) {
+      stripThreshold = 0;
+    } else if (gameTime >= 1) {
       stripThreshold = 1;
-    } else if (gameTime >= 1.5) {
-      stripThreshold = 2;
     } else {
-      stripThreshold = 3;
+      stripThreshold = 2;
     }
 
     if (coverFirers.length === 0) return;

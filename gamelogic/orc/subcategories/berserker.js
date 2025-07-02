@@ -43,16 +43,16 @@ export function applyBerserkerFeatures(OrcClass) {
     if (this.head) this.head.clearTint();
 
     // Set berserker stats
-    this.health = 2.5 + (this.berserkerStrengthBonus / 2 || 0);
+    this.health = 3 + (this.berserkerStrengthBonus / 2 || 0);
     this.maxHealth = this.health; // Store maximum health for health bar calculations
 
-    this.maxLaserResistance = 0.95;
+    this.maxLaserResistance = 0.92;
     this.minLaserResistance = 0.25;
-    this.laserResistance = 0.6 + 0.1 * (this.berserkerStrengthBonus || 0); // 50% chance to resist + 10% per bonus
+    this.laserResistance = 0.65 + 0.1 * (this.berserkerStrengthBonus || 0); // 50% chance to resist + 10% per bonus
     this.deflectionsCount = 0; // Track total deflections
     this.deflectionsThisDecay = 0; // Track deflections since last decay
-    this.resistanceDecayRate = Math.round(1.5 + 2 * this.berserkerStrengthBonus); //shots deflected to lose the decay amount
-    this.resistanceDecayAmount = 0.145 - ((1.5 * this.berserkerStrengthBonus) / 100); //Lose resistance in chunks
+    this.resistanceDecayRate = Math.round(1.5 + 3 * this.berserkerStrengthBonus); //shots deflected to lose the decay amount
+    this.resistanceDecayAmount = 0.145 - ((2 * this.berserkerStrengthBonus) / 100); //Lose resistance in chunks
     this.canUseLaser = false; // Cannot use laser attacks
     this.hasSwordAttack = true; // Must use sword attacks
     this.hasAxeAttack = true; // Can destroy terrain with axe
@@ -66,7 +66,7 @@ export function applyBerserkerFeatures(OrcClass) {
     this.terrainPatience = this.generateTerrainPatience();
 
     // Update behavior for berserker
-    this.moveSpeed = 112 + this.berserkerStrengthBonus * 3; // Much faster movement (was 90)
+    this.moveSpeed = 127 + this.berserkerStrengthBonus * 3; // Much faster movement (was 90)
     this.preferredRange = 40; // Close combat range for sword
     this.fireRate = 300; // Much faster attack rate for berserkers (was 400)
     this.bodyTurnSpeed = 3.5; // Faster turning for berserkers
@@ -393,7 +393,7 @@ export function applyBerserkerFeatures(OrcClass) {
     this.scene.tweens.add({
       targets: target,
       alpha: 0.3,
-      duration: 150,
+      duration: 30,
       yoyo: true,
       onComplete() {
         target.clearTint();

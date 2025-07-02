@@ -87,7 +87,7 @@ function getGameDimensions() {
 export const config = {
     type: Phaser.AUTO,
     ...getGameDimensions(),
-    teamSize: 45,
+    teamSize: 40,
     parent: 'game-container',
     backgroundColor: '#2d5a27',
     scale: {

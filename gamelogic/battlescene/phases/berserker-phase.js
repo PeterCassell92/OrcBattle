@@ -202,7 +202,7 @@ export function applyBerserkerPhaseMethods(SceneClass) {
       const mediumBerserkerConditionDifferential = 9;
       const highBerserkerConditionDifferential = 15;
       if (majorityUnitAdvantage >= highBerserkerConditionDifferential) {
-        return 3;
+        return 2.7;
       }
       if (majorityUnitAdvantage >= mediumBerserkerConditionDifferential) {
         return 1.8;
@@ -243,7 +243,7 @@ export function applyBerserkerPhaseMethods(SceneClass) {
       // Give the nonbeserker team a fire rate increase
       nonberserkerCandidates.forEach((orc) => {
         // Overclock weapon instead of directly modifying fireRate
-        orc.overclockEquippedWeapon(450, 50); // Reduce by 450ms, minimum 50ms
+        orc.overclockEquippedWeapon(100, 50); // Reduce by 450ms, minimum 50ms
         
         // Enhanced aiming to counter berserker speed
         orc.enhancedAiming = true;
@@ -258,15 +258,15 @@ export function applyBerserkerPhaseMethods(SceneClass) {
       setTimeout(() => {
         nonberserkerCandidates.forEach((orc) => {
           if (orc.active) {
-            // Additional overclocking after 6.5 seconds
-            orc.overclockEquippedWeapon(180, 50); // Additional 120ms reduction, minimum 50ms
+            // Additional overclocking after 9.5 seconds
+            orc.overclockEquippedWeapon(125, 50); // Additional 120ms reduction, minimum 50ms
             
             // Other stat modifications remain the same
             orc.bodyTurnSpeed += 0.8;
             orc.headTurnSpeed += 0.8;
           }
         });
-      }, 6500);    }
+      }, 9500);    }
   };
 
   SceneClass.prototype.applyEmergencyImmunity = function (orcs) {

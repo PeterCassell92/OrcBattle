@@ -89,7 +89,7 @@ export class BattleScene extends Phaser.Scene {
 
     // King release system
     this.kingsReleased = false;
-    this.kingReleaseTime = 11000; // 11 seconds in milliseconds
+    this.kingReleaseTime = 10000; // 11 seconds in milliseconds
 
     // Create all sprites first
     scene.createFlagSprites();

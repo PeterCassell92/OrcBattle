@@ -205,7 +205,11 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
   overclockEquippedWeapon(fireRateReduction, minimumFireRate = 100, speedMultiplier = 1.0) {
     if (this.hasWeapon()) {
       this.weapon.overclock(fireRateReduction, minimumFireRate, speedMultiplier);
-      console.log(`${this.team} orc overclocked weapon by reducing fire rate by ${fireRateReduction}ms`);
+      
+      // CRITICAL FIX: Also update the orc's fireRate to match the weapon
+      this.fireRate = this.weapon.fireRate;
+      
+      console.log(`${this.team} orc overclocked weapon by reducing fire rate by ${fireRateReduction}ms - orc fireRate now: ${this.fireRate}ms`);
     } else {
       console.log(`${this.team} orc has no weapon to overclock!`);
     }

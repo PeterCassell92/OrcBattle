@@ -26,18 +26,18 @@ export class Bloodstain extends Phaser.Physics.Arcade.Sprite {
     // Store scene reference for tweens
     this.gameScene = scene;
 
-    // Determine blood decay type (3/5 chance normal decay, 1/5 chance fast decay, 1/5 chance no decay)
+    // Determine blood decay type (reduce permanent stains by 3x)
     const decayRoll = Math.random();
-    if (decayRoll < 0.6) {
-      // 3 in 5 chance: Normal decay (fresh -> faint -> dried)
+    if (decayRoll < 0.73) {
+      // ~73% chance: Normal decay (fresh -> faint -> dried)
       this.decayType = 'normal';
       this.scheduleBloodDecay('normal');
-    } else if (decayRoll < 0.8) {
-      // 1 in 5 chance: Fast decay (fresh -> dried, skipping faint stage)
+    } else if (decayRoll < 0.93) {
+      // ~20% chance: Fast decay (fresh -> dried, skipping faint stage)
       this.decayType = 'fast';
       this.scheduleBloodDecay('fast');
     } else {
-      // 1 in 5 chance: No natural decay (stays fresh until victory cleansing)
+      // ~7% chance: No natural decay (stays fresh until victory cleansing) - 3x fewer permanent stains
       this.decayType = 'persistent';
     }
   }
