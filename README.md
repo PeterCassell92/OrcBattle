@@ -4,6 +4,12 @@ A Phaser 3 battle simulation game for **deciding 50:50 outcomes through epic orc
 
 Instead of flipping a coin, watch two orc armies clash in strategic warfare complete with kings, fireballs, berserkers, and victory ceremonies. Each battle is designed to be roughly balanced while providing entertaining visual spectacle.
 
+## 🎮 Play the Game
+
+[![Play OrcBattle](https://img.shields.io/badge/▶️_Play_Now-Game_Repository-red?style=for-the-badge&logo=github)](https://github.com/PeterCassell92/OrcBattle)
+
+> **To play**: Clone the repository and open `Orcs.html` in your browser, or see the [Running the Game](#running-the-game-🚀) section below.
+
 ## Project Philosophy 📋
 
 This project demonstrates **good JavaScript practices** for game development:
