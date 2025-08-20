@@ -6,9 +6,7 @@ Instead of flipping a coin, watch two orc armies clash in strategic warfare comp
 
 ## 🎮 Play the Game
 
-[![Play OrcBattle](https://img.shields.io/badge/▶️_Play_Now-Game_Repository-red?style=for-the-badge&logo=github)](https://github.com/PeterCassell92/OrcBattle)
-
-> **To play**: Clone the repository and open `Orcs.html` in your browser, or see the [Running the Game](#running-the-game-🚀) section below.
+[![Play OrcBattle](https://img.shields.io/badge/▶️_Play_Now-Live_Game-red?style=for-the-badge&logo=github)](https://petercassell92.github.io/OrcBattle/Orcs.html)
 
 ## Project Philosophy 📋
 
